@@ -1,0 +1,3 @@
+#Different files & directories for
+#git to ignore scanning
+build/

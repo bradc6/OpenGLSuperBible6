@@ -1,0 +1,253 @@
+#OpenGL Superbible sample code with a SDL2 twist ;)
+project(GraphicsSamples)
+cmake_minimum_required(VERSION 2.8.6)
+
+#Sets the directory for cmake to find Cmake configration packages,
+#these packages allow for cmake to find libraries that are not included
+#in the standard installation of Cmake. The standard packages can be
+#found @ /usr/share/cmake-2.8/Modules
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules
+                      ${CMAKE_MODULE_PATH})
+
+#Set the current version of the Graphics Examples
+set(GraphicsSamples_MAJOR_VERSION 0)
+set(GraphicsSamples_MINOR_VERSION 0)
+set(GraphicsSamples_PATCH_VERSION 1)
+
+#These variables will act as our list of include folders and linker flags
+#for compilation
+set(GraphicsSamplesLinkerFlags)
+set(GraphicsSamplesIncludeDirectories)
+set(GraphicsSamplesLinkerDirectories)
+
+#Set the local source root directory.
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Source)
+add_definitions(-DSOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Source)
+
+###Platform dependant include/linker Directories
+###Add fakeroot directores for different platforms
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    list(APPEND GraphicsSamplesIncludeDirectories "$ENV{HOMEPATH}/dev/fakeroot/include")
+    list(APPEND GraphicsSamplesLinkerDirectories "$ENV{HOMEPATH}/dev/fakeroot/lib")
+    include_directories("C:/fakeroot/include")
+    link_directories("C:/fakeroot/lib")
+    add_definitions(-DTARGETWINDOWS=1)
+    if(MSVC)
+        add_definitions(/arch:SSE2)
+    endif(MSVC)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    list(APPEND GraphicsSamplesIncludeDirectories "~/dev/fakeroot/include")
+    list(APPEND GraphicsSamplesLinkerDirectories "~/dev/fakeroot/lib")
+    list(APPEND GraphicsSamplesIncludeDirectories "/opt/local/include")
+    list(APPEND GraphicsSamplesLinkerDirectories "/opt/local/lib")
+    list(APPEND GraphicsSamplesLinkerFlags "-framework Cocoa")
+    list(APPEND CMAKE_PREFIX_PATH /opt/local)
+    add_definitions(-DTARGETMACOSX=1)
+else()
+    list(APPEND GraphicsSamplesIncludeDirectories "~/dev/fakeroot/include")
+    list(APPEND GraphicsSamplesLinkerDirectories "~/dev/fakeroot/lib")
+endif()
+
+#Required libraries to build the different
+#components of the tutorials. Find them and add the include/linker
+#directories and flags(In case the package manager find it in a weird place)
+find_package(SDL2 REQUIRED)
+list(APPEND GraphicsSamplesIncludeDirectories ${SDL2_INCLUDE_DIR})
+list(APPEND GraphicsSamplesLinkerFlags ${SDL2_LIBRARY})
+
+find_package(OpenGL REQUIRED)
+list(APPEND GraphicsSamplesIncludeDirectories ${OPENGL_INCLUDE_DIR})
+list(APPEND GraphicsSamplesLinkerFlags ${OPENGL_LIBRARIES})
+
+find_package(GLEW REQUIRED)
+list(APPEND GraphicsSamplesIncludeDirectories ${GLEW_INCLUDE_DIRS})
+list(APPEND GraphicsSamplesLinkerFlags ${GLEW_LIBRARIES})
+
+find_package(GLM REQUIRED)
+list(APPEND GraphicsSamplesIncludeDirectories ${GLM_INCLUDE_DIRS})
+
+#With all of those libraries and user defined paths added,
+#lets give them to the compiler and linker.
+include_directories(GraphicsSamplesIncludeDirectories)
+link_directories(GraphicsSamplesLinkerDirectories)
+
+set(TUTORIAL1_DIR "${SOURCE_DIR}/Tutorial1")
+set(TUTORIAL2_DIR "${SOURCE_DIR}/Tutorial2")
+set(TUTORIAL3_DIR "${SOURCE_DIR}/Tutorial3")
+set(TUTORIAL4_DIR "${SOURCE_DIR}/Tutorial4")
+set(TUTORIAL5_DIR "${SOURCE_DIR}/Tutorial5")
+set(TUTORIAL6_DIR "${SOURCE_DIR}/Tutorial6")
+set(TUTORIAL7_DIR "${SOURCE_DIR}/Tutorial7")
+set(TUTORIAL8_DIR "${SOURCE_DIR}/Tutorial8")
+set(TUTORIAL9_DIR "${SOURCE_DIR}/Tutorial9")
+set(TUTORIAL10_DIR "${SOURCE_DIR}/Tutorial10")
+set(TUTORIAL11_DIR "${SOURCE_DIR}/Tutorial11")
+set(TUTORIAL12_DIR "${SOURCE_DIR}/Tutorial12")
+set(TUTORIAL13_DIR "${SOURCE_DIR}/Tutorial13")
+set(TUTORIAL14_DIR "${SOURCE_DIR}/Tutorial14")
+set(TUTORIAL15_DIR "${SOURCE_DIR}/Tutorial15")
+set(TUTORIAL16_DIR "${SOURCE_DIR}/Tutorial16")
+set(TUTORIAL17_DIR "${SOURCE_DIR}/Tutorial17")
+set(TUTORIAL18_DIR "${SOURCE_DIR}/Tutorial18")
+set(TUTORIAL19_DIR "${SOURCE_DIR}/Tutorial19")
+set(TUTORIAL20_DIR "${SOURCE_DIR}/Tutorial20")
+
+set(Tutorial1-Source
+	${TUTORIAL1_DIR}/main.hpp
+	${TUTORIAL1_DIR}/main.cpp
+	)
+
+set(Tutorial2-Source
+	${TUTORIAL2_DIR}/main.hpp
+	${TUTORIAL2_DIR}/main.cpp
+	)
+
+set(Tutorial3-Source
+	${TUTORIAL3_DIR}/main.hpp
+	${TUTORIAL3_DIR}/main.cpp
+	)
+
+set(Tutorial4-Source
+	${TUTORIAL4_DIR}/main.hpp
+	${TUTORIAL4_DIR}/main.cpp
+	)
+
+set(Tutorial5-Source
+	${TUTORIAL5_DIR}/main.hpp
+	${TUTORIAL5_DIR}/main.cpp
+	)
+
+set(Tutorial6-Source
+	${TUTORIAL6_DIR}/main.hpp
+	${TUTORIAL6_DIR}/main.cpp
+	)
+
+set(Tutorial7-Source
+	${TUTORIAL7_DIR}/main.hpp
+	${TUTORIAL7_DIR}/main.cpp
+	)
+
+set(Tutorial8-Source
+	${TUTORIAL8_DIR}/main.hpp
+	${TUTORIAL8_DIR}/main.cpp
+	)
+
+set(Tutorial9-Source
+	${TUTORIAL9_DIR}/main.hpp
+	${TUTORIAL9_DIR}/main.cpp
+	)
+
+set(Tutorial10-Source
+	${TUTORIAL10_DIR}/main.hpp
+	${TUTORIAL10_DIR}/main.cpp
+	)
+
+set(Tutorial11-Source
+	${TUTORIAL11_DIR}/main.hpp
+	${TUTORIAL11_DIR}/main.cpp
+	)
+
+set(Tutorial12-Source
+	${TUTORIAL12_DIR}/main.hpp
+	${TUTORIAL12_DIR}/main.cpp
+	)
+
+set(Tutorial13-Source
+	${TUTORIAL13_DIR}/main.hpp
+	${TUTORIAL13_DIR}/main.cpp
+	)
+
+set(Tutorial14-Source
+	${TUTORIAL14_DIR}/main.hpp
+	${TUTORIAL14_DIR}/main.cpp
+	)
+
+set(Tutorial15-Source
+	${TUTORIAL15_DIR}/main.hpp
+	${TUTORIAL15_DIR}/main.cpp
+	)
+
+set(Tutorial16-Source
+	${TUTORIAL16_DIR}/main.hpp
+	${TUTORIAL16_DIR}/main.cpp
+	)
+
+set(Tutorial17-Source
+	${TUTORIAL17_DIR}/main.hpp
+	${TUTORIAL17_DIR}/main.cpp
+	)
+
+set(Tutorial18-Source
+	${TUTORIAL18_DIR}/main.hpp
+	${TUTORIAL18_DIR}/main.cpp
+	)
+
+set(Tutorial19-Source
+	${TUTORIAL19_DIR}/main.hpp
+	${TUTORIAL19_DIR}/main.cpp
+	)
+
+set(Tutorial20-Source
+	${TUTORIAL20_DIR}/main.hpp
+	${TUTORIAL20_DIR}/main.cpp
+	)
+
+add_executable(tutorial1 ${Tutorial1-Source})
+target_link_libraries(tutorial1 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial2 ${Tutorial2-Source})
+target_link_libraries(tutorial2 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial3 ${Tutorial3-Source})
+target_link_libraries(tutorial3 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial4 ${Tutorial4-Source})
+target_link_libraries(tutorial4 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial5 ${Tutorial5-Source})
+target_link_libraries(tutorial5 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial6 ${Tutorial6-Source})
+target_link_libraries(tutorial6 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial7 ${Tutorial7-Source})
+target_link_libraries(tutorial7 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial8 ${Tutorial8-Source})
+target_link_libraries(tutorial8 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial9 ${Tutorial9-Source})
+target_link_libraries(tutorial9 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial10 ${Tutorial10-Source})
+target_link_libraries(tutorial10 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial11 ${Tutorial11-Source})
+target_link_libraries(tutorial11 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial12 ${Tutorial12-Source})
+target_link_libraries(tutorial12 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial13 ${Tutorial13-Source})
+target_link_libraries(tutorial13 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial14 ${Tutorial14-Source})
+target_link_libraries(tutorial14 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial15 ${Tutorial15-Source})
+target_link_libraries(tutorial15 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial16 ${Tutorial16-Source})
+target_link_libraries(tutorial16 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial17 ${Tutorial17-Source})
+target_link_libraries(tutorial17 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial18 ${Tutorial18-Source})
+target_link_libraries(tutorial18 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial19 ${Tutorial19-Source})
+target_link_libraries(tutorial19 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial20 ${Tutorial20-Source})
+target_link_libraries(tutorial20 ${GraphicsSamplesLinkerFlags})
