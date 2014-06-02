@@ -2,6 +2,14 @@
 project(GraphicsSamples)
 cmake_minimum_required(VERSION 2.8.6)
 
+#We will assume you always want to build this project
+#with debugging symbols
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
 #Sets the directory for cmake to find Cmake configration packages,
 #these packages allow for cmake to find libraries that are not included
 #in the standard installation of Cmake. The standard packages can be
@@ -22,7 +30,7 @@ set(GraphicsSamplesLinkerDirectories)
 
 #Set the local source root directory.
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Source)
-add_definitions(-DSOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Source)
+add_definitions(-DSOURCEDIR=${CMAKE_CURRENT_SOURCE_DIR})
 
 ###Platform dependant include/linker Directories
 ###Add fakeroot directores for different platforms

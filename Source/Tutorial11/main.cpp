@@ -2,6 +2,7 @@
 //Interpolate data between our Vertex and Fragment Shaders
 
 #include "main.hpp"
+#include <iostream>
 
 int main(int argc, char* argv[])
 {
@@ -118,6 +119,7 @@ int main(int argc, char* argv[])
     glBindVertexArray(savedVertexAttributes);
 
     //Now lets build a vertex shader
+    std::cout << "Shader Dir: " << QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs) << '\n';
     std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs));
     //Make a pointer to make glShaderSource happy (I REALLY hate this part of the solution)
     const char *sourceVertexShaderBegin = vertexShaderSource.c_str();
