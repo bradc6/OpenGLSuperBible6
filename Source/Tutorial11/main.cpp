@@ -257,7 +257,6 @@ int main(int argc, char* argv[])
         }
 
         static const GLfloat greenColor[] = {0.0f, 0.25f, 0.0f, 1.0f};
-        static const GLfloat blackColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
         static const GLfloat one = 1.0f;
 
         //Set of the OpenGL viewPort size
@@ -272,14 +271,12 @@ int main(int argc, char* argv[])
 
         GLfloat time = ((GLfloat)SDL_GetTicks() * 750) / (GLfloat)CLOCKS_PER_SEC;
         GLfloat slowTime = time / 3.0f;
-
-
-         glm::mat4 modelViewMatrix = glm::translate(0.0f, 0.0f, -4.0f) *
-                                     glm::translate(sinf(2.1f * slowTime) * 0.5f,
+        glm::mat4 modelViewMatrix = glm::translate(glm::vec3(0.0f, 0.0f, -4.0f)) *
+                                    glm::translate(glm::vec3(sinf(2.1f * slowTime) * 0.5f,
                                                     cosf(1.7f * slowTime) * 0.5f,
-                                                    sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f) *
-                                    glm::rotate((float)time * 45.0f, 0.0f, 1.0f, 0.0f) *
-                                    glm::rotate((float)time * 81.0f, 1.0f, 0.0f, 0.0f);
+                                                    (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) *
+                                    glm::rotate((float)time * 45.0f, glm::vec3(0.0f, 1.0f, 0.0f)) *
+                                    glm::rotate((float)time * 81.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
 

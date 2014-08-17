@@ -5,7 +5,7 @@
 
 int main(int argc, char* argv[])
 {
-    std::cout << "Draw Triangle on the screen with a gl_FragCoord in teh Fragment Shader\n";
+    std::cout << "Draw Triangle on the screen with a gl_FragCoord in the Fragment Shader\n";
 
     //Initialize the graphics portion of SDL
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)

@@ -70,6 +70,7 @@ list(APPEND GraphicsSamplesLinkerFlags ${OPENGL_LIBRARIES})
 find_package(GLEW REQUIRED)
 list(APPEND GraphicsSamplesIncludeDirectories ${GLEW_INCLUDE_DIRS})
 list(APPEND GraphicsSamplesLinkerFlags ${GLEW_LIBRARIES})
+include_directories(${GLEW_INCLUDE_DIRS})
 
 find_package(GLM REQUIRED)
 list(APPEND GraphicsSamplesIncludeDirectories ${GLM_INCLUDE_DIRS})
