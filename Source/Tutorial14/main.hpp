@@ -20,6 +20,11 @@
 #include <sstream>
 #include <fstream>
 
+//Include the KTX library
+#define KTX_OPENGL 1
+#define KTX_USE_GETPROC 1
+#include <ktx.h>
+
 
 #define Q(x) #x
 #define QUOTE(x) Q(x)

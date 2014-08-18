@@ -30,7 +30,9 @@ set(GraphicsSamplesLinkerDirectories)
 
 #Set the local source root directory.
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Source)
+set(LIBRARIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Libraries)
 add_definitions(-DSOURCEDIR=${CMAKE_CURRENT_SOURCE_DIR})
+add_definitions(-DTEXTUREDIR=${CMAKE_CURRENT_SOURCE_DIR}/Textures)
 
 ###Platform dependant include/linker Directories
 ###Add fakeroot directores for different platforms
@@ -74,6 +76,10 @@ include_directories(${GLEW_INCLUDE_DIRS})
 
 find_package(GLM REQUIRED)
 list(APPEND GraphicsSamplesIncludeDirectories ${GLM_INCLUDE_DIRS})
+
+#Add additional cmake subprojects to ours.
+add_subdirectory(${LIBRARIES_DIR}/KTX/build/cmake)
+include_directories(${LIBRARIES_DIR}/ktx/include)
 
 #With all of those libraries and user defined paths added,
 #lets give them to the compiler and linker.
@@ -241,7 +247,7 @@ add_executable(tutorial13 ${Tutorial13-Source})
 target_link_libraries(tutorial13 ${GraphicsSamplesLinkerFlags})
 
 add_executable(tutorial14 ${Tutorial14-Source})
-target_link_libraries(tutorial14 ${GraphicsSamplesLinkerFlags})
+target_link_libraries(tutorial14 ${GraphicsSamplesLinkerFlags} ktx)
 
 add_executable(tutorial15 ${Tutorial15-Source})
 target_link_libraries(tutorial15 ${GraphicsSamplesLinkerFlags})

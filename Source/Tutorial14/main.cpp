@@ -50,6 +50,137 @@ int main()
     }
     
     //DO SOME OPENGL STUFF HERE
+    //Declare and create a vertex array object
+    //This will store the different attributes of the shaders and vertex
+    GLuint savedVertexAttributes;
+    
+    //Generate the Vertex Array object  on the graphics card that we
+    //will later be able to save for fast reference. This only allocates the memory
+    //Next we need to bind it to be active.
+    glGenVertexArrays(1, &savedVertexAttributes);
+    
+    //Bind that newly created space in order to be used
+    glBindVertexArray(savedVertexAttributes);
+    
+    //Now lets build a vertex shader
+    GLuint vertexShader = CompileGLShader(QUOTE(SOURCEDIR/Source/Tutorial14/Shaders/Main.vs.glsl), GL_VERTEX_SHADER);
+    
+    //Now lets build a fragment shader
+    GLuint fragmentShader = CompileGLShader(QUOTE(SOURCEDIR/Source/Tutorial14/Shaders/Main.fs.glsl), GL_FRAGMENT_SHADER);
+    
+    //Now to use the shaders we just compiled, we need to create a shader program
+    //(In a sense these are like different, pipelines that when linked can be switched out)
+    GLuint shaderProgram = glCreateProgram();
+    
+    //Attach shaders to our newly created shader program
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    
+    //With the shader program created and linked, lets use the GLShader program
+    glUseProgram(shaderProgram);
+    
+    //*********************************************
+    //Loading/Generating/Viewing a KTX Texture here
+    //*********************************************
+    
+    //We will pass these variables to ktxLoadTextureN and it
+    //will fill out the different attributes associated with the image.
+    //We will set some default values for sanity.
+    GLuint ktxTexture = 0;                     //A default state for the texture handle
+    GLenum ktxTextureTargetType;    //Default to a 2D texture (Probably what you are loading)
+    GLenum textureGLError;            //We will assume no error until otherwise
+    GLboolean isTexturePreMipmapped;        //We will assume the image is not pre mipmapped.
+    
+    //First lets load the KTX image into system memory
+    std::cout << "Loading " << QUOTE(TEXTUREDIR/down-reference.ktx) << '\n';
+    KTX_error_code ktxTextureError = ktxLoadTextureN(QUOTE(TEXTUREDIR/down-reference.ktx),
+                                                     &ktxTexture,
+                                                     &ktxTextureTargetType,
+                                                     NULL,
+                                                     &isTexturePreMipmapped,
+                                                     &textureGLError,
+                                                     0,
+                                                     NULL);
+    //Check that KTX image loading was NOT successful
+    if(KTX_SUCCESS != ktxTextureError)
+    {
+        //Check out what the ktx error is
+        switch (ktxTextureError)
+        {
+            case KTX_FILE_OPEN_FAILED:
+                std::cout << "The target file could not be opened.\n";
+                break;
+            case KTX_FILE_WRITE_ERROR:
+                std::cout << "An error occurred while writing to the file.\n";
+                break;
+            case KTX_GL_ERROR:
+                std::cout << "GL operations resulted in an error. \n";
+                break;
+            case KTX_INVALID_OPERATION:
+                std::cout << "The operation is not allowed in the current state.\n";
+                break;
+            case KTX_INVALID_VALUE:
+                std::cout << "A parameter value was not valid \n";
+                break;
+            case KTX_NOT_FOUND:
+                std::cout << "Requested key was not found \n";
+                break;
+            case KTX_OUT_OF_MEMORY:
+                std::cout << "Not enough memory to complete the operation.\n";
+                break;
+            case KTX_UNEXPECTED_END_OF_FILE:
+                std::cout << "The file did not contain enough data.\n";
+                break;
+            case KTX_UNKNOWN_FILE_FORMAT:
+                std::cout << "The file is not a KTX file.\n";
+                break;
+            case KTX_UNSUPPORTED_TEXTURE_TYPE:
+                std::cout << "The KTX file specifies an unsupported texture type.\n";
+                break;
+            default:
+                std::cout << "Unknown Error, this should NEVER happen!!\n";
+                break;
+        }
+        
+        
+        std::cout << "libktx failed to load the ktx image!!\n";
+        exit(-1);
+    }
 
+    glEnable(ktxTextureTargetType);
+    
+    if (isTexturePreMipmapped)
+    /* Enable bilinear mipmapping */
+        glTexParameteri(ktxTexture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    else
+        glTexParameteri(ktxTexture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    
+    glTexParameteri(ktxTexture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    //Create a window event in order to know when the mainWindow "Close" is pressed
+    SDL_Event *windowEvent = new SDL_Event;
+    
+    while(true)
+    {
+        if(SDL_PollEvent(windowEvent))
+        {
+            if(windowEvent->type == SDL_QUIT)
+            {
+                break;
+            }
+        }
+        
+        //Set the clear buffer color
+        static const GLfloat greenColor[] = {0.0f, 0.25f, 0.0f, 1.0f};
+        
+        //Clear the frame buffer with a greenColor.
+        glClearBufferfv(GL_COLOR, 0, greenColor);
+        //Draw the triangle vertices.
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        
+        SDL_GL_SwapWindow(mainWindow);
+    }
+    
     return 0;
 }
