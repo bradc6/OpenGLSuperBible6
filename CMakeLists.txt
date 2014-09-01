@@ -79,7 +79,7 @@ list(APPEND GraphicsSamplesIncludeDirectories ${GLM_INCLUDE_DIRS})
 
 #Add additional cmake subprojects to ours.
 add_subdirectory(${LIBRARIES_DIR}/KTX/build/cmake)
-include_directories(${LIBRARIES_DIR}/ktx/include)
+include_directories(${LIBRARIES_DIR}/KTX/include)
 
 #With all of those libraries and user defined paths added,
 #lets give them to the compiler and linker.
