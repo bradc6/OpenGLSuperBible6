@@ -127,61 +127,93 @@ set(Tutorial2-Source
 set(Tutorial3-Source
 	${TUTORIAL3_DIR}/main.hpp
 	${TUTORIAL3_DIR}/main.cpp
+	${TUTORIAL3_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL3_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial4-Source
 	${TUTORIAL4_DIR}/main.hpp
 	${TUTORIAL4_DIR}/main.cpp
+	${TUTORIAL4_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL4_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial5-Source
 	${TUTORIAL5_DIR}/main.hpp
 	${TUTORIAL5_DIR}/main.cpp
+	${TUTORIAL5_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL5_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial6-Source
 	${TUTORIAL6_DIR}/main.hpp
 	${TUTORIAL6_DIR}/main.cpp
+	${TUTORIAL6_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL6_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial7-Source
 	${TUTORIAL7_DIR}/main.hpp
 	${TUTORIAL7_DIR}/main.cpp
+	${TUTORIAL7_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL7_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial8-Source
 	${TUTORIAL8_DIR}/main.hpp
 	${TUTORIAL8_DIR}/main.cpp
+	${TUTORIAL8_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL8_DIR}/Shaders/Main.tcs.glsl
+	${TUTORIAL8_DIR}/Shaders/Main.tes.glsl
+	${TUTORIAL8_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial9-Source
 	${TUTORIAL9_DIR}/main.hpp
 	${TUTORIAL9_DIR}/main.cpp
+	${TUTORIAL9_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL9_DIR}/Shaders/Main.tcs.glsl
+	${TUTORIAL9_DIR}/Shaders/Main.tes.glsl
+	${TUTORIAL9_DIR}/Shaders/Main.gs.glsl
+	${TUTORIAL9_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial10-Source
 	${TUTORIAL10_DIR}/main.hpp
 	${TUTORIAL10_DIR}/main.cpp
+	${TUTORIAL10_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL10_DIR}/Shaders/Main.tcs.glsl
+	${TUTORIAL10_DIR}/Shaders/Main.tes.glsl
+	${TUTORIAL10_DIR}/Shaders/Main.gs.glsl
+	${TUTORIAL10_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial11-Source
 	${TUTORIAL11_DIR}/main.hpp
-	${TUTORIAL11_DIR}/main.cpp
+	${TUTORIAL11_DIR}/main.cpp	
+	${TUTORIAL11_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL11_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial12-Source
 	${TUTORIAL12_DIR}/main.hpp
 	${TUTORIAL12_DIR}/main.cpp
+	${TUTORIAL12_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL12_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial13-Source
 	${TUTORIAL13_DIR}/main.hpp
 	${TUTORIAL13_DIR}/main.cpp
+	${TUTORIAL13_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL13_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial14-Source
 	${TUTORIAL14_DIR}/main.hpp
 	${TUTORIAL14_DIR}/main.cpp
+	${TUTORIAL14_DIR}/Shaders/Main.vs.glsl
+	${TUTORIAL14_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial15-Source
