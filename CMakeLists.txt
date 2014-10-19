@@ -65,6 +65,10 @@ find_package(SDL2 REQUIRED)
 list(APPEND GraphicsSamplesIncludeDirectories ${SDL2_INCLUDE_DIR})
 list(APPEND GraphicsSamplesLinkerFlags ${SDL2_LIBRARY})
 
+find_package(SDL2_image)
+list(APPEND GraphicsSamplesIncludeDirectories ${SDL2_IMAGE_INCLUDE_DIRS})
+list(APPEND GraphicsSamplesLinkerFlags ${SDL2_IMAGE_LIBRARIES})
+
 find_package(OpenGL REQUIRED)
 list(APPEND GraphicsSamplesIncludeDirectories ${OPENGL_INCLUDE_DIR})
 list(APPEND GraphicsSamplesLinkerFlags ${OPENGL_LIBRARIES})
@@ -106,6 +110,9 @@ set(TUTORIAL17_DIR "${SOURCE_DIR}/Tutorial17")
 set(TUTORIAL18_DIR "${SOURCE_DIR}/Tutorial18")
 set(TUTORIAL19_DIR "${SOURCE_DIR}/Tutorial19")
 set(TUTORIAL20_DIR "${SOURCE_DIR}/Tutorial20")
+
+#Extra tutorials not included in the book.
+set(TUTORIALSDL2IMAGE_DIR "${SOURCE_DIR}/TutorialSDL2Image")
 
 set(Tutorial1-Source
 	${TUTORIAL1_DIR}/main.hpp
@@ -207,6 +214,11 @@ set(Tutorial20-Source
 	${TUTORIAL20_DIR}/main.cpp
 	)
 
+set(TutorialSDL2Image-Source
+	${TUTORIALSDL2IMAGE_DIR}/main.hpp
+	${TUTORIALSDL2IMAGE_DIR}/main.cpp
+	)
+
 add_executable(tutorial1 ${Tutorial1-Source})
 target_link_libraries(tutorial1 ${GraphicsSamplesLinkerFlags})
 
@@ -266,3 +278,8 @@ target_link_libraries(tutorial19 ${GraphicsSamplesLinkerFlags})
 
 add_executable(tutorial20 ${Tutorial20-Source})
 target_link_libraries(tutorial20 ${GraphicsSamplesLinkerFlags})
+
+if(SDL2_IMAGE_FOUND)
+add_executable(tutorialSDL2Image ${TutorialSDL2Image-Source})
+target_link_libraries(tutorialSDL2Image ${GraphicsSamplesLinkerFlags})
+endif()
