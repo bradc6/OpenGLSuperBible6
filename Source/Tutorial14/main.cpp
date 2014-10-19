@@ -93,8 +93,8 @@ int main()
     GLboolean isTexturePreMipmapped;        //We will assume the image is not pre mipmapped.
     
     //First lets load the KTX image into system memory
-    std::cout << "Loading " << QUOTE(TEXTUREDIR/down-reference.ktx) << '\n';
-    KTX_error_code ktxTextureError = ktxLoadTextureN(QUOTE(TEXTUREDIR/down-reference.ktx),
+    std::cout << "Loading " << QUOTE(TEXTUREDIR/VeryLargeSampleTexture.ktx) << '\n';
+    KTX_error_code ktxTextureError = ktxLoadTextureN(QUOTE(TEXTUREDIR/VeryLargeSampleTexture.ktx),
                                                      &ktxTexture,
                                                      &ktxTextureTargetType,
                                                      NULL,
@@ -140,6 +140,7 @@ int main()
                 break;
             default:
                 std::cout << "Unknown Error, this should NEVER happen!!\n";
+                throw "Unknown KTX file";
                 break;
         }
         
@@ -148,16 +149,21 @@ int main()
         exit(-1);
     }
 
-    glEnable(ktxTextureTargetType);
-    
-    if (isTexturePreMipmapped)
-    /* Enable bilinear mipmapping */
+    glEnable(ktxTexture);
+    if(isTexturePreMipmapped)
+    {
+        //Enable bilinear mipmapping
         glTexParameteri(ktxTexture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    }
     else
+    {
         glTexParameteri(ktxTexture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    
-    glTexParameteri(ktxTexture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
+
+    glTexParameteri(ktxTexture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+
     //Create a window event in order to know when the mainWindow "Close" is pressed
     SDL_Event *windowEvent = new SDL_Event;
     
