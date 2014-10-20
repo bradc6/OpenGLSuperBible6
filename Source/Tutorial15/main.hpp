@@ -16,8 +16,12 @@
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_image.h>
 
+//Include the TinyObjLoader library.
+#include <tiny_obj_loader.h>
+
 #include <iostream>
 #include <string>
+#include <vector>
 #include <sstream>
 #include <fstream>
 

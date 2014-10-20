@@ -33,6 +33,7 @@ set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 set(LIBRARIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Libraries)
 add_definitions(-DSOURCEDIR=${CMAKE_CURRENT_SOURCE_DIR})
 add_definitions(-DTEXTUREDIR=${CMAKE_CURRENT_SOURCE_DIR}/Textures)
+add_definitions(-DMODELDIR=${CMAKE_CURRENT_SOURCE_DIR}/Models)
 
 ###Platform dependant include/linker Directories
 ###Add fakeroot directores for different platforms
@@ -84,6 +85,9 @@ list(APPEND GraphicsSamplesIncludeDirectories ${GLM_INCLUDE_DIRS})
 #Add additional cmake subprojects to ours.
 add_subdirectory(${LIBRARIES_DIR}/KTX/build/cmake)
 include_directories(${LIBRARIES_DIR}/KTX/include)
+#Add TinyObjLoader
+add_subdirectory(${LIBRARIES_DIR}/TinyObjLoader)
+include_directories(${LIBRARIES_DIR}/TinyObjLoader)
 
 #With all of those libraries and user defined paths added,
 #lets give them to the compiler and linker.
@@ -294,7 +298,7 @@ add_executable(tutorial14 ${Tutorial14-Source})
 target_link_libraries(tutorial14 ${GraphicsSamplesLinkerFlags} ktx)
 
 add_executable(tutorial15 ${Tutorial15-Source})
-target_link_libraries(tutorial15 ${GraphicsSamplesLinkerFlags})
+target_link_libraries(tutorial15 ${GraphicsSamplesLinkerFlags} tinyobjloader)
 
 add_executable(tutorial16 ${Tutorial16-Source})
 target_link_libraries(tutorial16 ${GraphicsSamplesLinkerFlags})

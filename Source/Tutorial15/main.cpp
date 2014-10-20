@@ -101,6 +101,22 @@ int main()
     //**********************************************
     //Create a vertex array and upload it to the GPU
     //**********************************************
+    //We will be using TinyObjLoader, as we don't really want to
+    //know the wavefront obj spec.
+
+    //Load the shapes and materials (Even though we will not use the materials)
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+
+    std::string tinyObjError = tinyobj::LoadObj(shapes,
+                                                materials,
+                                                QUOTE(MODELDIR/Torus.obj),
+                                                QUOTE(MODELDIR));
+
+    if(!tinyObjError.empty()())
+    {
+        throw tinyObjError.c_str();
+    }
 
     return 0;
 }

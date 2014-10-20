@@ -1,3 +1,6 @@
 [submodule "Libraries/KTX"]
 	path = Libraries/KTX
 	url = https://github.com/bradc6/KTX.git
+[submodule "Libraries/TinyObjLoader"]
+	path = Libraries/TinyObjLoader
+	url = https://github.com/syoyo/tinyobjloader.git
