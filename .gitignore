@@ -2,4 +2,5 @@
 #git to ignore scanning
 build/
 *.user
+*.autosave
 CMakeLists.txt.user*
