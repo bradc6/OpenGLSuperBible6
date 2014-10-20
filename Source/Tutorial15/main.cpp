@@ -17,7 +17,9 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     //Lets create a OpenGL window
-    SDL_Window *mainWindow = SDL_CreateWindow("KTX Texture Triangle", 100, 100, WINDOW_RESOLUTION_WIDTH, WINDOW_RESOLUTION_HEIGHT, SDL_WINDOW_OPENGL);
+    SDL_Window *mainWindow = SDL_CreateWindow("KTX Texture Triangle", 100, 100,
+                                              WINDOW_RESOLUTION_WIDTH, WINDOW_RESOLUTION_HEIGHT,
+                                              SDL_WINDOW_OPENGL);
 
     //Check that the SDL/OpenGL window was created
     if(!mainWindow)
@@ -32,7 +34,6 @@ int main()
 
     if(!mainContext)
     {
-
         std::cout << SDL_GetError() << '\n';
         exit(-1);
     }
@@ -50,5 +51,56 @@ int main()
     }
 
     //DO SOME OPENGL STUFF HERE
+    //********************************************
+    //Load+Compile+Link the Shaders
+    //********************************************
+
+
+    //********************************************
+    //Create a 2D Texture and upload it to the GPU
+    //********************************************
+    GLuint sampleTexture = glNULL;
+
+    //Generate a name for the texture to create.
+    glGenTextures(1, &sampleTexture);
+
+    //Bind the texture to the context, setting the texture to be 2D.
+    glBindTexture(GL_TEXTURE_2D, sampleTexture);
+
+    //First we will init a surface pointer and
+    //a integer to have LoadImage get the texture data and
+    //detect the texture image format. (RGB, RGBA, ect)
+    SDL_Surface *sampleTextureSurface = NULL;
+    GLint sampleTextureFormat = glNULL;
+    LoadImage(QUOTE(TEXTUREDIR/MediumSampleTexture.png), sampleTextureSurface, sampleTextureFormat);
+
+    //With the image loaded into system memory we will now upload it
+    //to the GPU.
+    // Specify the amount of storage we need for the texture
+    glTexStorage2D(GL_TEXTURE_2D,                                      // 2D texture
+                   8,                                                  // 8 mipmap levels
+                   GL_RGBA32F,                                         // 32-bit floating-point RGBA data
+                   sampleTextureSurface->w, sampleTextureSurface->h);                // imageWidth x imageHeight texels
+
+    //Tell OpenGL the amount of storage that we need have for
+    //the texture we are uploading.
+    glTexSubImage2D(GL_TEXTURE_2D,                                    //The type of texture that we are uploading.
+                    0,                                                //The mipmapped nth level of the texture.
+                    0,0,                                              //The texel offset in the X & Y direction
+                                                                      //within the texture array.
+                    sampleTextureSurface->w, sampleTextureSurface->h, //The width & height of the target texture.
+                    sampleTextureFormat,                              //The format of the image (Red/Green/Blue/Alpha).
+                    GL_UNSIGNED_BYTE,                                 //The data format of the pixel data.
+                    sampleTextureSurface->pixels);                    //The system memory location of the texture data.
+
+    //Now that the texture has been uploaded to the GPU, we can
+    //free our system memory copy
+    SDL_free(sampleTextureSurface);
+    sampleTextureSurface = NULL;
+
+    //**********************************************
+    //Create a vertex array and upload it to the GPU
+    //**********************************************
+
     return 0;
 }

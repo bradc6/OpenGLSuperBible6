@@ -14,6 +14,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_image.h>
 
 #include <iostream>
 #include <string>
@@ -140,6 +141,61 @@ GLuint CompileGLShader(std::string shaderFilePath, GLint shaderType)
     }
 
     return targetShader;
+}
+
+//!Loads the image to system memory,
+/*!Loads a GLSL shader and compiles the shader
+ * \pre The image filepath must be a valid filesystem path to a valid image
+ * \param [in] imageFilePath The file path to the image file to load
+ * \param [out] targetSuface The resulting surface that will be
+ * \param [out] textureFormat The detected format of the loaded image.
+ * \throws
+ * \note NA*/
+void LoadImage(const std::string &imageFilePath, SDL_Surface *&targetSurface, GLint &textureFormat)
+{
+    //Check that the targetSurface pointer is NULL
+    if(targetSurface)
+    {
+        throw "SDL Surface was not NULL! Don't leak memory!";
+    }
+
+    //Load & decode a 2d image that SDL2_Image can handle
+    targetSurface = IMG_Load(imageFilePath.c_str());
+
+    if(!targetSurface)
+    {
+        throw ("Failed to load the target image @" + imageFilePath).c_str();
+    }
+
+   //Determine the image format (Image color channel configuration)
+   //textureImageFormat is first use to query the surface for the
+   //number of channels. After detection it holds the OpenGL texture
+   //encoding.
+   textureFormat = targetSurface->format->BytesPerPixel;
+   if (textureFormat == 4)
+   {
+       //alpha channel
+       if (targetSurface->format->Rmask == 0x000000ff)
+            textureFormat = GL_RGBA;
+       else
+            textureFormat = GL_BGRA;
+   }
+   else
+   {
+        if (textureFormat == 3)
+        {
+            //no alpha channel
+            if (targetSurface->format->Rmask == 0x000000ff)
+                textureFormat = GL_RGB;
+            else
+                textureFormat = GL_BGR;
+        }
+    else
+    {
+        throw "Unable to determine image format";
+    }
+   }
+
 }
 
 #endif
