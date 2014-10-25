@@ -2,7 +2,7 @@
 
 int main()
 {
-    std::cout << "Sample code of uploading a 2D Texture from a KTX image\n";
+    std::cout << "Sample code of using simple texture coordinates\n";
 
     //Initialize the graphics portion of SDL
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
@@ -11,20 +11,20 @@ int main()
         exit(-1);
     }
 
-    //Request the context be OpenGL 4.0 for our feature set
+    //Request the context be OpenGL 4.2 for our feature set
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     //Lets create a OpenGL window
-    SDL_Window *mainWindow = SDL_CreateWindow("KTX Texture Triangle", 100, 100,
+    SDL_Window *mainWindow = SDL_CreateWindow("Simple Texture Coordinates", 100, 100,
                                               WINDOW_RESOLUTION_WIDTH, WINDOW_RESOLUTION_HEIGHT,
                                               SDL_WINDOW_OPENGL);
 
     //Check that the SDL/OpenGL window was created
     if(!mainWindow)
     {
-        std::cout << "The SDL_CreateWindow method failed\n";
+        std::cout << std::string("The SDL_CreateWindow method failed,\n") + SDL_GetError();
         exit(-1);
     }
 
@@ -55,6 +55,22 @@ int main()
     //Load+Compile+Link the Shaders
     //********************************************
 
+    //Lets compile and upload our vertex shader
+     GLuint vertexShader = CompileGLShader(QUOTE(SOURCEDIR/Source/Tutorial15/Shaders/Main.vs.glsl), GL_VERTEX_SHADER);
+
+    //Compile and upload our fragment shader
+    GLuint fragmentShader = CompileGLShader(QUOTE(SOURCEDIR/Source/Tutorial15/Shaders/Main.fs.glsl), GL_FRAGMENT_SHADER);
+
+    //Create a shader program
+    GLuint mainShaderProgram = glCreateProgram();
+
+    //Attach the shaders to the program and link them.
+    glAttachShader(mainShaderProgram, vertexShader);
+    glAttachShader(mainShaderProgram, fragmentShader);
+    glLinkProgram(mainShaderProgram);
+
+    //Use the program we linked for the shader pipeline
+    glUseProgram(mainShaderProgram);
 
     //********************************************
     //Create a 2D Texture and upload it to the GPU
@@ -101,6 +117,7 @@ int main()
     //**********************************************
     //Create a vertex array and upload it to the GPU
     //**********************************************
+
     //We will be using TinyObjLoader, as we don't really want to
     //know the wavefront obj spec.
 
@@ -113,10 +130,114 @@ int main()
                                                 QUOTE(MODELDIR/Torus.obj),
                                                 QUOTE(MODELDIR));
 
-    if(!tinyObjError.empty()())
+    //Check if any errors occured while loading
+    //the wavefront obj
+    if(!tinyObjError.empty())
     {
         throw tinyObjError.c_str();
     }
+
+    //Ensure that there is at least one shape in
+    //the object.
+    if(shapes.size() < 1)
+    {
+        throw "No shapes were found";
+    }
+
+    //Generate a buffer name to use
+    GLuint torusModel = glNULL;
+    glGenBuffers(1, &torusModel);
+
+    //Bind the new buffer to our current context
+    glBindBuffer(GL_ARRAY_BUFFER, torusModel);
+
+    //We are going to upload only the first shape
+    //from the wavefront object
+    glBufferData(GL_ARRAY_BUFFER,
+                 shapes[0].mesh.indices.size(),
+                 &shapes[0].mesh.indices[0],
+                 GL_STATIC_DRAW);
+
+    //This function has NOTHING to do with pointers (legacy)
+    //Instead it is a pointer to a buffer object that the Vertex Shader
+    //will fill up with the data we give it. (We initialize it to 0)
+    glVertexAttribPointer(0,
+                          shapes[0].mesh.indices.size(),
+                         GL_UNSIGNED_INT, GL_FALSE, 0 ,NULL);
+
+    //Once we fill the glVertexAttrib buffer with the data we want
+    //we will enable it, telling OpenGL to use it instead of glVertexAttrib*()
+    glEnableVertexAttribArray(0);
+
+
+    //Enable the use of Depth testing to check if certain objects
+    //are too far away on the screen
+    glEnable(GL_DEPTH_TEST);
+
+    //Check the deptch of vertices in on Z (Must be less then or equal to 1)
+    glDepthFunc(GL_LEQUAL);
+
+
+    //Get the SDL window width and height
+    int windowWidth, windowheight;
+    SDL_GetWindowSize(mainWindow, &windowWidth, &windowheight);
+
+    //Get the projection matrix Uniform location from the Vertex Shader
+    GLint projectionMatrixLocation = glGetUniformLocation(mainShaderProgram, "projectionMatrix");
+
+    if(projectionMatrixLocation == -1)
+    {
+        std::cout << "Could not find projectionMatrix Uniform definition!\n";
+        exit(-1);
+    }
+
+    //Now to calculate the aspect ratio of the window
+    float windowAspectRatio = (float) windowWidth / (float) windowheight;
+
+    //Create a projection matrix based on the aspect ratio
+    glm::mat4 projectionMatrix = glm::perspective(50.0f, windowAspectRatio, 0.1f, 1000.0f);
+
+    //Update the Vertex Shader Uniform with our projectionMatrix
+    glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+    //Get the model view matrix Uniform location from the Vertex Shader
+    GLint modelViewMatrixLocation = glGetUniformLocation(mainShaderProgram, "modelViewMatrix");
+    if(modelViewMatrixLocation == -1)
+    {
+        std::cout << "Could not find modelViewMatrix Uniform definition!\n";
+        exit(-1);
+    }
+
+    //Create a window event in order to know when the mainWindow "Close" is pressed
+       SDL_Event *windowEvent = new SDL_Event;
+
+       while(true)
+       {
+           if(SDL_PollEvent(windowEvent))
+           {
+               if(windowEvent->type == SDL_QUIT)
+               {
+                   break;
+               }
+           }
+
+           static const GLfloat greenColor[] = {0.0f, 0.25f, 0.0f, 1.0f};
+           static const GLfloat one = 1.0f;
+
+           //Set of the OpenGL viewPort size
+           //This should probably be set to the same size as the window in most situations
+           glViewport(0, 0, windowWidth, windowheight);
+
+           //Clear the screen color
+           glClearBufferfv(GL_COLOR, 0, greenColor);
+
+           //Clear the depth buffer
+           glClearBufferfv(GL_DEPTH, 0, &one);
+
+           //glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
+           glDrawArrays(GL_TRIANGLES, 0, shapes[0].mesh.indices.size());
+           SDL_GL_SwapWindow(mainWindow);
+       }
 
     return 0;
 }

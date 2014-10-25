@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
 
     //Now lets build a vertex shader
     std::cout << "Shader Dir: " << QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs) << '\n';
-    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs));
+    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs.glsl));
     //Make a pointer to make glShaderSource happy (I REALLY hate this part of the solution)
     const char *sourceVertexShaderBegin = vertexShaderSource.c_str();
     //Create a instance of a vertex shader (Create a shader)
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
     }
 
     //Now lets build a fragment shader
-    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.fs));
+    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.fs.glsl));
     const char *sourceFragmentShaderBegin = fragmentShaderSource.c_str();
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, (const GLchar **) &sourceFragmentShaderBegin, NULL);
@@ -185,7 +185,8 @@ int main(int argc, char* argv[])
 
     //With the buffer bound to our OpenGL context, we can now create the size
     //of the buffer to be (allocation of size), it will be of data source
-    //squareVertices, which will be GL_STATIC_DRAW (const) (The data is copied from system memory to graphics memory)
+    //squareVertices, which will be GL_STATIC_DRAW (const) (The data is copied from system memory 
+    //to graphics memory)
     glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), squareVertices, GL_STATIC_DRAW);
 
     //This function has NOTHING to do with pointers (legacy)
@@ -209,7 +210,7 @@ int main(int argc, char* argv[])
     //Check the deptch of vertices in on Z (Must be less then or equal to 1)
     glDepthFunc(GL_LEQUAL);
 
-    //Copy the projectMatrix (in system memory) to hte projectionMatrixLocation
+    //Copy the projectMatrix (in system memory) to the projectionMatrixLocation
     //(The buffer in graphics memory)
     //glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
 
