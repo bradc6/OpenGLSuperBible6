@@ -1,4 +1,8 @@
 #OpenGL Superbible sample code with a SDL2 twist ;)
+#If you wish to compile with clang use
+#"make -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .."
+#To make a release verion use the build type options
+#"cmake -DCMAKE_BUILD_TYPE=Release .."
 project(GraphicsSamples)
 cmake_minimum_required(VERSION 2.8.6)
 
@@ -34,6 +38,7 @@ set(LIBRARIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Libraries)
 add_definitions(-DSOURCEDIR=${CMAKE_CURRENT_SOURCE_DIR})
 add_definitions(-DTEXTUREDIR=${CMAKE_CURRENT_SOURCE_DIR}/Textures)
 add_definitions(-DMODELDIR=${CMAKE_CURRENT_SOURCE_DIR}/Models)
+
 
 ###Platform dependant include/linker Directories
 ###Add fakeroot directores for different platforms

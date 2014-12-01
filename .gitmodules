@@ -4,3 +4,6 @@
 [submodule "Libraries/TinyObjLoader"]
 	path = Libraries/TinyObjLoader
 	url = https://github.com/syoyo/tinyobjloader.git
+[submodule "Libraries/OpenCollada"]
+	path = Libraries/OpenCollada
+	url = https://github.com/bradc6/OpenCOLLADA.git
