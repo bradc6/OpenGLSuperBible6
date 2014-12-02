@@ -1,8 +1,63 @@
-#include "main.hpp"
+//Draw a OpenGL Triangle onto the screen with different offsets.
+//Interpolate data between our Vertex and Fragment Shaders
 
-int main()
+#include "main.hpp"
+#include <iostream>
+
+int main(int argc, char* argv[])
 {
-    std::cout << "Sample code of using simple texture coordinates\n";
+    static const GLfloat cubeVertices[] =
+        {
+            -0.25f,  0.25f, -0.25f,
+            -0.25f, -0.25f, -0.25f,
+             0.25f, -0.25f, -0.25f,
+
+             0.25f, -0.25f, -0.25f,
+             0.25f,  0.25f, -0.25f,
+            -0.25f,  0.25f, -0.25f,
+
+             0.25f, -0.25f, -0.25f,
+             0.25f, -0.25f,  0.25f,
+             0.25f,  0.25f, -0.25f,
+
+             0.25f, -0.25f,  0.25f,
+             0.25f,  0.25f,  0.25f,
+             0.25f,  0.25f, -0.25f,
+
+             0.25f, -0.25f,  0.25f,
+            -0.25f, -0.25f,  0.25f,
+             0.25f,  0.25f,  0.25f,
+
+            -0.25f, -0.25f,  0.25f,
+            -0.25f,  0.25f,  0.25f,
+             0.25f,  0.25f,  0.25f,
+
+            -0.25f, -0.25f,  0.25f,
+            -0.25f, -0.25f, -0.25f,
+            -0.25f,  0.25f,  0.25f,
+
+            -0.25f, -0.25f, -0.25f,
+            -0.25f,  0.25f, -0.25f,
+            -0.25f,  0.25f,  0.25f,
+
+            -0.25f, -0.25f,  0.25f,
+             0.25f, -0.25f,  0.25f,
+             0.25f, -0.25f, -0.25f,
+
+             0.25f, -0.25f, -0.25f,
+            -0.25f, -0.25f, -0.25f,
+            -0.25f, -0.25f,  0.25f,
+
+            -0.25f,  0.25f, -0.25f,
+             0.25f,  0.25f, -0.25f,
+             0.25f,  0.25f,  0.25f,
+
+             0.25f,  0.25f,  0.25f,
+            -0.25f,  0.25f,  0.25f,
+            -0.25f,  0.25f, -0.25f
+        };
+
+    std::cout << "Spinning cube using the Chapter 4 Math and the Streaming of data from charpter 5\n";
 
     //Initialize the graphics portion of SDL
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
@@ -11,20 +66,18 @@ int main()
         exit(-1);
     }
 
-    //Request the context be OpenGL 4.2 for our feature set
+    //Request the context be OpenGL 3.2 for our feature set
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     //Lets create a OpenGL window
-    SDL_Window *mainWindow = SDL_CreateWindow("Simple Texture Coordinates", 100, 100,
-                                              WINDOW_RESOLUTION_WIDTH, WINDOW_RESOLUTION_HEIGHT,
-                                              SDL_WINDOW_OPENGL);
+    SDL_Window *mainWindow = SDL_CreateWindow("Spinning Cube", 100, 100, 800, 600, SDL_WINDOW_OPENGL);
 
     //Check that the SDL/OpenGL window was created
     if(!mainWindow)
     {
-        std::cout << std::string("The SDL_CreateWindow method failed,\n") + SDL_GetError();
+        std::cout << "The SDL_CreateWindow method failed\n";
         exit(-1);
     }
 
@@ -34,6 +87,7 @@ int main()
 
     if(!mainContext)
     {
+
         std::cout << SDL_GetError() << '\n';
         exit(-1);
     }
@@ -51,68 +105,89 @@ int main()
     }
 
     //DO SOME OPENGL STUFF HERE
-    //********************************************
-    //Load+Compile+Link the Shaders
-    //********************************************
 
-    //Lets compile and upload our vertex shader
-     GLuint vertexShader = CompileGLShader(QUOTE(SOURCEDIR/Source/Tutorial15/Shaders/Main.vs.glsl), GL_VERTEX_SHADER);
+    //Declare and create a vertex array object
+    //This will store the different attributes of the shaders and vertex
+    GLuint savedVertexAttributes;
 
-    //Compile and upload our fragment shader
-    GLuint fragmentShader = CompileGLShader(QUOTE(SOURCEDIR/Source/Tutorial15/Shaders/Main.fs.glsl), GL_FRAGMENT_SHADER);
+    //Generate the Vertex Array object  on the graphics card that we
+    //will later be able to save for fast reference. This only allocates the memory
+    //Next we need to bind it to be active.
+    glGenVertexArrays(1, &savedVertexAttributes);
 
-    //Create a shader program
-    GLuint mainShaderProgram = glCreateProgram();
+    //Bind that newly created space in order to be used
+    glBindVertexArray(savedVertexAttributes);
 
-    //Attach the shaders to the program and link them.
-    glAttachShader(mainShaderProgram, vertexShader);
-    glAttachShader(mainShaderProgram, fragmentShader);
-    glLinkProgram(mainShaderProgram);
+    //Now lets build a vertex shader
+    std::cout << "Shader Dir: " << QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs) << '\n';
+    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs.glsl));
+    //Make a pointer to make glShaderSource happy (I REALLY hate this part of the solution)
+    const char *sourceVertexShaderBegin = vertexShaderSource.c_str();
+    //Create a instance of a vertex shader (Create a shader)
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    //Load the shader source into our Vertex Shader instance.
+    glShaderSource(vertexShader, 1, (const GLchar **) &sourceVertexShaderBegin, NULL);
+    //Clear the system memory copy of the Vertex Shader Source
+    vertexShaderSource.clear();
+    //Now to compile the Vertex Shader
+    glCompileShader(vertexShader);
+    //Lets make a GLint to ensure that the shader compilation was successful
+    GLint shaderCompilerStatus;
+    //Get the status of the shader compiler.
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &shaderCompilerStatus);
+    if(shaderCompilerStatus != GL_TRUE)
+    {
+        std::cout << "Failed to compile the vertex shader\n";
+        char openGLCompilerError[1024];
+        glGetShaderInfoLog(vertexShader, 1024, NULL, openGLCompilerError);
+        std::cout << openGLCompilerError << '\n';
+        exit(-1);
+    }
 
-    //Use the program we linked for the shader pipeline
-    glUseProgram(mainShaderProgram);
+    //Now lets build a fragment shader
+    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.fs.glsl));
+    const char *sourceFragmentShaderBegin = fragmentShaderSource.c_str();
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, (const GLchar **) &sourceFragmentShaderBegin, NULL);
+    fragmentShaderSource.clear();
+    glCompileShader(fragmentShader);
+    //Get the status of the shader compiler.
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &shaderCompilerStatus);
+    if(shaderCompilerStatus != GL_TRUE)
+    {
+        std::cout << "Failed to compile the fragment shader\n";
+        char openGLCompilerError[1024];
+        glGetShaderInfoLog(fragmentShader, 1024, NULL, openGLCompilerError);
+        std::cout << openGLCompilerError << '\n';
+        exit(-1);
+    }
 
-    //********************************************
-    //Create a 2D Texture and upload it to the GPU
-    //********************************************
-    GLuint sampleTexture = glNULL;
+    //Now to use the shaders we just compiled, we need to create a shader program
+    //(In a sense these are like different, pipelines that when linked can be switched out)
+    GLuint shaderProgram = glCreateProgram();
 
-    //Generate a name for the texture to create.
-    glGenTextures(1, &sampleTexture);
+    //Attach shaders to our newly created shader program
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
 
-    //Bind the texture to the context, setting the texture to be 2D.
-    glBindTexture(GL_TEXTURE_2D, sampleTexture);
+    //Link the Shader Program to create a executable shader pipeline
+    //for the graphics card t ouse.
+    glLinkProgram(shaderProgram);
+    //Ensure that the program linked successfully
+    GLint programLinkerStatus;
+    //Get the status of the shader program linker.
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programLinkerStatus);
+    if(programLinkerStatus != GL_TRUE)
+    {
+        std::cout << "Failed to linke shader program\n";
+        char openGLLinkerError[1024];
+        glGetProgramInfoLog(shaderProgram, 1024, NULL, openGLLinkerError);
+        std::cout << openGLLinkerError << '\n';
+        exit(-1);
+    }
 
-    //First we will init a surface pointer and
-    //a integer to have LoadImage get the texture data and
-    //detect the texture image format. (RGB, RGBA, ect)
-    SDL_Surface *sampleTextureSurface = NULL;
-    GLint sampleTextureFormat = glNULL;
-    LoadImage(QUOTE(TEXTUREDIR/MediumSampleTexture.png), sampleTextureSurface, sampleTextureFormat);
 
-    //With the image loaded into system memory we will now upload it
-    //to the GPU.
-    // Specify the amount of storage we need for the texture
-    glTexStorage2D(GL_TEXTURE_2D,                                      // 2D texture
-                   8,                                                  // 8 mipmap levels
-                   GL_RGBA32F,                                         // 32-bit floating-point RGBA data
-                   sampleTextureSurface->w, sampleTextureSurface->h);                // imageWidth x imageHeight texels
-
-    //Tell OpenGL the amount of storage that we need have for
-    //the texture we are uploading.
-    glTexSubImage2D(GL_TEXTURE_2D,                                    //The type of texture that we are uploading.
-                    0,                                                //The mipmapped nth level of the texture.
-                    0,0,                                              //The texel offset in the X & Y direction
-                                                                      //within the texture array.
-                    sampleTextureSurface->w, sampleTextureSurface->h, //The width & height of the target texture.
-                    sampleTextureFormat,                              //The format of the image (Red/Green/Blue/Alpha).
-                    GL_UNSIGNED_BYTE,                                 //The data format of the pixel data.
-                    sampleTextureSurface->pixels);                    //The system memory location of the texture data.
-
-    //Now that the texture has been uploaded to the GPU, we can
-    //free our system memory copy
-    SDL_free(sampleTextureSurface);
-    sampleTextureSurface = NULL;
+    glUseProgram(shaderProgram);
 
     //**********************************************
     //Create a vertex array and upload it to the GPU
@@ -127,7 +202,7 @@ int main()
 
     std::string tinyObjError = tinyobj::LoadObj(shapes,
                                                 materials,
-                                                QUOTE(MODELDIR/Torus.obj),
+                                                QUOTE(MODELDIR/Cube.obj),
                                                 QUOTE(MODELDIR));
 
     //Check if any errors occured while loading
@@ -144,31 +219,36 @@ int main()
         throw "No shapes were found";
     }
 
+
     //Generate a buffer name to use
-    GLuint torusModel = glNULL;
-    glGenBuffers(1, &torusModel);
+    GLuint vertexObjectBuffer = glNULL;
 
-    //Bind the new buffer to our current context
-    glBindBuffer(GL_ARRAY_BUFFER, torusModel);
+    glGenBuffers(1, &vertexObjectBuffer);
 
-    //We are going to upload only the first shape
-    //from the wavefront object
-    glBufferData(GL_ARRAY_BUFFER,
-                 shapes[0].mesh.indices.size(),
-                 &shapes[0].mesh.indices[0],
-                 GL_STATIC_DRAW);
+    //Now bind the newly created buffer to the context using the GL_ARRAY_BUFFER
+    //binding point
+    glBindBuffer(GL_ARRAY_BUFFER, vertexObjectBuffer);
+
+    //With the buffer bound to our OpenGL context, we can now create the size
+    //of the buffer to be (allocation of size), it will be of data source
+    //squareVertices, which will be GL_STATIC_DRAW (const) (The data is copied from system memory
+    //to graphics memory)
+    glBufferData(GL_ARRAY_BUFFER, 128 * sizeof(float), &shapes[0].mesh.positions[0], GL_STATIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), squareVertices, GL_STATIC_DRAW);
 
     //This function has NOTHING to do with pointers (legacy)
     //Instead it is a pointer to a buffer object that the Vertex Shader
     //will fill up with the data we give it. (We initialize it to 0)
-    glVertexAttribPointer(0,
-                          shapes[0].mesh.indices.size(),
-                         GL_UNSIGNED_INT, GL_FALSE, 0 ,NULL);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
     //Once we fill the glVertexAttrib buffer with the data we want
     //we will enable it, telling OpenGL to use it instead of glVertexAttrib*()
     glEnableVertexAttribArray(0);
 
+    //Enable OpenGL culling (only render vertices/data that is viewable)
+    glEnable(GL_CULL_FACE);
+    //Set our culling to be clock wise.
+    glFrontFace(GL_CW);
 
     //Enable the use of Depth testing to check if certain objects
     //are too far away on the screen
@@ -177,13 +257,16 @@ int main()
     //Check the deptch of vertices in on Z (Must be less then or equal to 1)
     glDepthFunc(GL_LEQUAL);
 
+    //Copy the projectMatrix (in system memory) to the projectionMatrixLocation
+    //(The buffer in graphics memory)
+    //glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
 
     //Get the SDL window width and height
     int windowWidth, windowheight;
     SDL_GetWindowSize(mainWindow, &windowWidth, &windowheight);
 
     //Get the projection matrix Uniform location from the Vertex Shader
-    GLint projectionMatrixLocation = glGetUniformLocation(mainShaderProgram, "projectionMatrix");
+    GLint projectionMatrixLocation = glGetUniformLocation(shaderProgram, "projectionMatrix");
 
     if(projectionMatrixLocation == -1)
     {
@@ -201,7 +284,7 @@ int main()
     glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
     //Get the model view matrix Uniform location from the Vertex Shader
-    GLint modelViewMatrixLocation = glGetUniformLocation(mainShaderProgram, "modelViewMatrix");
+    GLint modelViewMatrixLocation = glGetUniformLocation(shaderProgram, "modelViewMatrix");
     if(modelViewMatrixLocation == -1)
     {
         std::cout << "Could not find modelViewMatrix Uniform definition!\n";
@@ -209,35 +292,54 @@ int main()
     }
 
     //Create a window event in order to know when the mainWindow "Close" is pressed
-       SDL_Event *windowEvent = new SDL_Event;
+    SDL_Event *windowEvent = new SDL_Event;
 
-       while(true)
-       {
-           if(SDL_PollEvent(windowEvent))
-           {
-               if(windowEvent->type == SDL_QUIT)
-               {
-                   break;
-               }
-           }
+    while(true)
+    {
+        if(SDL_PollEvent(windowEvent))
+        {
+            if(windowEvent->type == SDL_QUIT)
+            {
+                break;
+            }
+        }
 
-           static const GLfloat greenColor[] = {0.0f, 0.25f, 0.0f, 1.0f};
-           static const GLfloat one = 1.0f;
+        static const GLfloat greenColor[] = {0.0f, 0.25f, 0.0f, 1.0f};
+        static const GLfloat one = 1.0f;
 
-           //Set of the OpenGL viewPort size
-           //This should probably be set to the same size as the window in most situations
-           glViewport(0, 0, windowWidth, windowheight);
+        //Set of the OpenGL viewPort size
+        //This should probably be set to the same size as the window in most situations
+        glViewport(0, 0, windowWidth, windowheight);
 
-           //Clear the screen color
-           glClearBufferfv(GL_COLOR, 0, greenColor);
+        //Clear the screen color
+        glClearBufferfv(GL_COLOR, 0, greenColor);
 
-           //Clear the depth buffer
-           glClearBufferfv(GL_DEPTH, 0, &one);
+        //Clear the depth buffer
+        glClearBufferfv(GL_DEPTH, 0, &one);
 
-           //glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
-           glDrawArrays(GL_TRIANGLES, 0, shapes[0].mesh.indices.size());
-           SDL_GL_SwapWindow(mainWindow);
-       }
+        GLfloat time = ((GLfloat)SDL_GetTicks() * 750) / (GLfloat)CLOCKS_PER_SEC;
+        GLfloat slowTime = time / 3.0f;
+        glm::mat4 modelViewMatrix = glm::translate(glm::vec3(0.0f, 0.0f, -4.0f)) *
+                                    glm::translate(glm::vec3(sinf(2.1f * slowTime) * 0.5f,
+                                                    cosf(1.7f * slowTime) * 0.5f,
+                                                    (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) *
+                                    glm::rotate((float)time * 45.0f, glm::vec3(0.0f, 1.0f, 0.0f)) *
+                                    glm::rotate((float)time * 81.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
+        glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        SDL_GL_SwapWindow(mainWindow);
+    }
+
+    //Clean Up shaders
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    glDeleteProgram(shaderProgram);
+
+    //Clean up our data structures
+    SDL_GL_DeleteContext(mainContext);
     return 0;
 }

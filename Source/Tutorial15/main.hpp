@@ -8,7 +8,6 @@
 #define degreesToRadians(targetDegree) targetDegree*(3.141592f/180.0f)
 
 //Force the use of Radians only
-#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 

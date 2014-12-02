@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 		exit(-1);
 	}
 
-	//Request the context be OpenGL 3.2 for our feature set
+    //Request the context be OpenGL 4.0 for our feature set
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
 
 	//Now lets build a vertex shader
 	std::string vertexShaderSource = LoadFileToString(
-			QUOTE(SOURCEDIR/Source/Tutorial5/Shaders/Main.vs));
+            QUOTE(SOURCEDIR/Source/Tutorial5/Shaders/Main.vs.glsl));
 	//Make a pointer to make glShaderSource happy (I REALLY hate this part of the solution)
 	const char *sourceVertexShaderBegin = vertexShaderSource.c_str();
 	//Create a instance of a vertex shader (Create a shader)
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
 
 	//Now lets build a fragment shader
 	std::string fragmentShaderSource = LoadFileToString(
-			QUOTE(SOURCEDIR/Source/Tutorial5/Shaders/Main.fs));
+            QUOTE(SOURCEDIR/Source/Tutorial5/Shaders/Main.fs.glsl));
 	const char *sourceFragmentShaderBegin = fragmentShaderSource.c_str();
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1,
@@ -127,6 +127,20 @@ int main(int argc, char* argv[]) {
 	//Link the Shader Program to create a executable shader pipeline
 	//for the graphics card t ouse.
 	glLinkProgram(shaderProgram);
+    //Ensure that the program linked successfully
+    GLint programLinkerStatus;
+    //Get the status of the shader program linker.
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programLinkerStatus);
+    if(programLinkerStatus != GL_TRUE)
+    {
+        std::cout << "Failed to linke shader program\n";
+        char openGLLinkerError[1024];
+        glGetProgramInfoLog(shaderProgram, 1024, NULL, openGLLinkerError);
+        std::cout << openGLLinkerError << '\n';
+        exit(-1);
+    }
+
+
 	glUseProgram(shaderProgram);
 
 	//Create a window event in order to know when the mainWindow "Close" is pressed

@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
         exit(-1);
     }
 
-    //Request the context be OpenGL 3.2 for our feature set
+    //Request the context be OpenGL 4.0 for our feature set
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -173,6 +173,20 @@ int main(int argc, char* argv[])
     //Link the Shader Program to create a executable shader pipeline
     //for the graphics card t ouse.
     glLinkProgram(shaderProgram);
+    //Ensure that the program linked successfully
+    GLint programLinkerStatus;
+    //Get the status of the shader program linker.
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programLinkerStatus);
+    if(programLinkerStatus != GL_TRUE)
+    {
+        std::cout << "Failed to linke shader program\n";
+        char openGLLinkerError[1024];
+        glGetProgramInfoLog(shaderProgram, 1024, NULL, openGLLinkerError);
+        std::cout << openGLLinkerError << '\n';
+        exit(-1);
+    }
+
+
     glUseProgram(shaderProgram);
 
     //Generate a buffer name to use

@@ -176,6 +176,20 @@ int main(int argc, char* argv[])
     //Link the Shader Program to create a executable shader pipeline
     //for the graphics card t ouse.
     glLinkProgram(shaderProgram);
+    //Ensure that the program linked successfully
+    GLint programLinkerStatus;
+    //Get the status of the shader program linker.
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programLinkerStatus);
+    if(programLinkerStatus != GL_TRUE)
+    {
+        std::cout << "Failed to linke shader program\n";
+        char openGLLinkerError[1024];
+        glGetProgramInfoLog(shaderProgram, 1024, NULL, openGLLinkerError);
+        std::cout << openGLLinkerError << '\n';
+        exit(-1);
+    }
+
+
     glUseProgram(shaderProgram);
     
     //Generate a buffer name to use
