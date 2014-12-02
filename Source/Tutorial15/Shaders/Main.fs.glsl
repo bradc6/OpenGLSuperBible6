@@ -1,15 +1,13 @@
-#version 420 core
-
-layout (binding = 0) uniform sampler2D tex_object;
-
-in VS_OUT
-{
-    vec2 tc;
-} fs_in;
+#version 400 core
 
 out vec4 color;
 
+in VertexShaderOuput
+{
+        vec4 vertexColor;
+} fragmentShaderIn;
+
 void main(void)
 {
-    color = texture(tex_object, fs_in.tc * vec2(3.0, 1.0));
+        color = fragmentShaderIn.vertexColor;
 }

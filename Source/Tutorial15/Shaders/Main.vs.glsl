@@ -1,4 +1,14 @@
-#version 420 core
+#version 400 core
+
+//Input vertices from a object buffer
+in vec4 position;
+
+//The vertice color data to share with the
+//fragment shader.
+out VertexShaderOuput
+{
+        vec4 vertexColor;
+} vertexShaderOut;
 
 //The Model View Matrix to convert vertice points
 //from the localized model points to the Viewer space
@@ -6,20 +16,8 @@
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 
-
-layout (location = 0) in vec4 position;
-layout (location = 4) in vec2 tc;
-
-out VS_OUT
-{
-    vec2 tc;
-} vs_out;
-
 void main(void)
 {
-    vec4 pos_vs = modelViewMatrix * position;
-
-    vs_out.tc = tc;
-
-    gl_Position = projectionMatrix * pos_vs;
+        gl_Position = projectionMatrix * modelViewMatrix * position;
+        vertexShaderOut.vertexColor = position * 2.0 + vec4(0.5, 0.5, 0.5, 0);
 }
