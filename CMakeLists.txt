@@ -235,6 +235,8 @@ set(Tutorial15-Source
 set(Tutorial16-Source
 	${TUTORIAL16_DIR}/main.hpp
 	${TUTORIAL16_DIR}/main.cpp
+        ${TUTORIAL16_DIR}/Shaders/Main.vs.glsl
+        ${TUTORIAL16_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial17-Source
@@ -310,7 +312,7 @@ add_executable(tutorial15 ${Tutorial15-Source})
 target_link_libraries(tutorial15 ${GraphicsSamplesLinkerFlags} tinyobjloader)
 
 add_executable(tutorial16 ${Tutorial16-Source})
-target_link_libraries(tutorial16 ${GraphicsSamplesLinkerFlags})
+target_link_libraries(tutorial16 ${GraphicsSamplesLinkerFlags} tinyobjloader)
 
 add_executable(tutorial17 ${Tutorial17-Source})
 target_link_libraries(tutorial17 ${GraphicsSamplesLinkerFlags})
