@@ -260,6 +260,8 @@ set(Tutorial20-Source
 set(TutorialSDL2Image-Source
 	${TUTORIALSDL2IMAGE_DIR}/main.hpp
 	${TUTORIALSDL2IMAGE_DIR}/main.cpp
+        ${TUTORIALSDL2IMAGE_DIR}/Shaders/Main.vs.glsl
+        ${TUTORIALSDL2IMAGE_DIR}/Shaders/Main.fs.glsl
 	)
 
 add_executable(tutorial1 ${Tutorial1-Source})
