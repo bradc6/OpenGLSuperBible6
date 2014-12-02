@@ -6,57 +6,6 @@
 
 int main(int argc, char* argv[])
 {
-    static const GLfloat cubeVertices[] =
-        {
-            -0.25f,  0.25f, -0.25f,
-            -0.25f, -0.25f, -0.25f,
-             0.25f, -0.25f, -0.25f,
-
-             0.25f, -0.25f, -0.25f,
-             0.25f,  0.25f, -0.25f,
-            -0.25f,  0.25f, -0.25f,
-
-             0.25f, -0.25f, -0.25f,
-             0.25f, -0.25f,  0.25f,
-             0.25f,  0.25f, -0.25f,
-
-             0.25f, -0.25f,  0.25f,
-             0.25f,  0.25f,  0.25f,
-             0.25f,  0.25f, -0.25f,
-
-             0.25f, -0.25f,  0.25f,
-            -0.25f, -0.25f,  0.25f,
-             0.25f,  0.25f,  0.25f,
-
-            -0.25f, -0.25f,  0.25f,
-            -0.25f,  0.25f,  0.25f,
-             0.25f,  0.25f,  0.25f,
-
-            -0.25f, -0.25f,  0.25f,
-            -0.25f, -0.25f, -0.25f,
-            -0.25f,  0.25f,  0.25f,
-
-            -0.25f, -0.25f, -0.25f,
-            -0.25f,  0.25f, -0.25f,
-            -0.25f,  0.25f,  0.25f,
-
-            -0.25f, -0.25f,  0.25f,
-             0.25f, -0.25f,  0.25f,
-             0.25f, -0.25f, -0.25f,
-
-             0.25f, -0.25f, -0.25f,
-            -0.25f, -0.25f, -0.25f,
-            -0.25f, -0.25f,  0.25f,
-
-            -0.25f,  0.25f, -0.25f,
-             0.25f,  0.25f, -0.25f,
-             0.25f,  0.25f,  0.25f,
-
-             0.25f,  0.25f,  0.25f,
-            -0.25f,  0.25f,  0.25f,
-            -0.25f,  0.25f, -0.25f
-        };
-
     std::cout << "Spinning cube using the Chapter 4 Math and the Streaming of data from charpter 5\n";
 
     //Initialize the graphics portion of SDL
@@ -72,7 +21,7 @@ int main(int argc, char* argv[])
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     //Lets create a OpenGL window
-    SDL_Window *mainWindow = SDL_CreateWindow("Spinning Cube", 100, 100, 800, 600, SDL_WINDOW_OPENGL);
+    SDL_Window *mainWindow = SDL_CreateWindow("Spinning Object Model", 100, 100, 800, 600, SDL_WINDOW_OPENGL);
 
     //Check that the SDL/OpenGL window was created
     if(!mainWindow)
@@ -202,14 +151,15 @@ int main(int argc, char* argv[])
 
     std::string tinyObjError = tinyobj::LoadObj(shapes,
                                                 materials,
-                                                QUOTE(MODELDIR/Cube.obj),
+                                                QUOTE(MODELDIR/torus.obj),
                                                 QUOTE(MODELDIR));
 
     //Check if any errors occured while loading
     //the wavefront obj
     if(!tinyObjError.empty())
     {
-        throw tinyObjError.c_str();
+        std::cout << tinyObjError.c_str() << '\n';
+        assert(0);
     }
 
     //Ensure that there is at least one shape in
@@ -233,8 +183,7 @@ int main(int argc, char* argv[])
     //of the buffer to be (allocation of size), it will be of data source
     //squareVertices, which will be GL_STATIC_DRAW (const) (The data is copied from system memory
     //to graphics memory)
-    glBufferData(GL_ARRAY_BUFFER, 128 * sizeof(float), &shapes[0].mesh.positions[0], GL_STATIC_DRAW);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), squareVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (shapes[0].mesh.positions.size() * sizeof(GLfloat)), &shapes[0].mesh.positions[0], GL_STATIC_DRAW);
 
     //This function has NOTHING to do with pointers (legacy)
     //Instead it is a pointer to a buffer object that the Vertex Shader
@@ -245,17 +194,23 @@ int main(int argc, char* argv[])
     //we will enable it, telling OpenGL to use it instead of glVertexAttrib*()
     glEnableVertexAttribArray(0);
 
-    //Enable OpenGL culling (only render vertices/data that is viewable)
-    glEnable(GL_CULL_FACE);
-    //Set our culling to be clock wise.
-    glFrontFace(GL_CW);
+    //**********************************
+    //Setup the Element order to draw in
+    //**********************************
+    GLuint elementBufferObject = glNULL;
 
-    //Enable the use of Depth testing to check if certain objects
-    //are too far away on the screen
-    glEnable(GL_DEPTH_TEST);
+    //Generate a name for the buffer
+    glGenBuffers(1, &elementBufferObject);
 
-    //Check the deptch of vertices in on Z (Must be less then or equal to 1)
-    glDepthFunc(GL_LEQUAL);
+    //Bind it to the context
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+
+    //Upload the data to the element buffer
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 (shapes[0].mesh.indices.size() * sizeof(GLuint)),
+                  &shapes[0].mesh.indices[0],
+                   GL_STATIC_DRAW);
+
 
     //Copy the projectMatrix (in system memory) to the projectionMatrixLocation
     //(The buffer in graphics memory)
@@ -294,6 +249,9 @@ int main(int argc, char* argv[])
     //Create a window event in order to know when the mainWindow "Close" is pressed
     SDL_Event *windowEvent = new SDL_Event;
 
+    //Enable wireframe mode, as we don't have sufficent shaders.
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
     while(true)
     {
         if(SDL_PollEvent(windowEvent))
@@ -322,14 +280,13 @@ int main(int argc, char* argv[])
         glm::mat4 modelViewMatrix = glm::translate(glm::vec3(0.0f, 0.0f, -4.0f)) *
                                     glm::translate(glm::vec3(sinf(2.1f * slowTime) * 0.5f,
                                                     cosf(1.7f * slowTime) * 0.5f,
-                                                    (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) *
+                                                (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) *
                                     glm::rotate((float)time * 45.0f, glm::vec3(0.0f, 1.0f, 0.0f)) *
                                     glm::rotate((float)time * 81.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawElements(GL_TRIANGLES, shapes[0].mesh.indices.size(), GL_UNSIGNED_INT, 0);
         SDL_GL_SwapWindow(mainWindow);
     }
 
