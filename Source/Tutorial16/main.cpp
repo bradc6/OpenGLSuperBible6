@@ -173,6 +173,26 @@ int main(int argc, char* argv[])
                     mainTextureFormat,                                         //The format of the image (Red/Green/Blue/Alpha).
                     GL_UNSIGNED_BYTE,                                           //The data format of the pixel data.
                     sysMainTexture->pixels);                               //The system memory location of the texture data.
+
+    //This is the old way to do the same as above (This is for OpenGL 4.1-)
+    //https://www.opengl.org/wiki/Common_Mistakes#Creating_a_complete_texture
+    /*
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
+
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGBA,
+                 sysMainTexture->w, sysMainTexture->h,
+                 0,
+                 mainTextureFormat,
+                 GL_UNSIGNED_BYTE,
+                 sysMainTexture->pixels);*/
+
+    //Generate the mipmaps on the GPU
+    //(Generate the mipmap for the currently bound texture.
+    glGenerateMipmap(GL_TEXTURE_2D);
+
     //Free the surface as the texture is now in the GPU.
     SDL_free(sysMainTexture);
     sysMainTexture = NULL;
