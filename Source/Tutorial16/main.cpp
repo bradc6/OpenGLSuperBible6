@@ -3,6 +3,8 @@
 #include "main.hpp"
 #include <iostream>
 
+#define USE_CHECKERBOARD_TEXTURE 0
+
 int main(int argc, char* argv[])
 {
     std::cout << "Spinning textured torus with texture coordiates\n";
@@ -16,8 +18,9 @@ int main(int argc, char* argv[])
 
     //Request the context be OpenGL 4.0 for our feature set
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
     //Lets create a OpenGL window
     SDL_Window *mainWindow = SDL_CreateWindow("Spinning Object Model", 100, 100, 800, 600, SDL_WINDOW_OPENGL);
@@ -51,6 +54,9 @@ int main(int argc, char* argv[])
         std::cout << "GLEW Error: " << glewGetErrorString(glewError) << '\n';
         exit(-1);
     }
+
+    //With the context set we will setup a OpenGL debug context callback
+    glDebugMessageCallbackARB((GLDEBUGPROCARB)gl_debug_callback, NULL);
 
     //DO SOME OPENGL STUFF HERE
 
@@ -141,6 +147,35 @@ int main(int argc, char* argv[])
     //Load a texture to wrap around our model
     //***************************************
 
+    //Get the sampler2D from the fragment shader
+    GLuint main2DSampler = glNULL;
+
+    //Get the location of the uniform
+    main2DSampler = glGetUniformLocation(shaderProgram, "samplerTexture");
+    if(main2DSampler == GL_INVALID_VALUE)
+    {
+            std::cout << "The value was not generated in the current shader program";
+            assert(0);
+    }
+
+    //Set it to Zero?
+    glUniform1i(main2DSampler, 0);
+
+#if USE_CHECKERBOARD_TEXTURE
+    GLuint mainTexture = glNULL;
+    //Generate the texture name
+    glGenTextures(1, &mainTexture);
+
+    //Set the active OpenGL texture
+    glActiveTexture(GL_TEXTURE0);
+
+    //Allocate texture storage for the image
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, 16, 16);
+
+    //"Update"/Upload the data to the GPU
+    glTexSubImage2D(GL_TEXTURE_2D, 0,0,0,16,16, GL_RGBA, GL_UNSIGNED_BYTE, checkerBoardTexture);
+
+#else
     //First we need to load a 2d texture into system
     //memory.
     SDL_Surface *sysMainTexture = NULL;
@@ -153,6 +188,9 @@ int main(int argc, char* argv[])
 
     //Generate a name for the texture.
     glGenTextures(1, &mainTexture);
+
+    //Set the current active texture
+    glActiveTexture(GL_TEXTURE0);
 
     //Bind the texture to the context
     glBindTexture(GL_TEXTURE_2D, mainTexture);
@@ -196,6 +234,7 @@ int main(int argc, char* argv[])
     //Free the surface as the texture is now in the GPU.
     SDL_free(sysMainTexture);
     sysMainTexture = NULL;
+#endif
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
