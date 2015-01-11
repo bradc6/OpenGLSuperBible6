@@ -14,6 +14,18 @@ if(NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
+#Use C++11 if possible (or the most recent that we can use
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#elseif(COMPILER_SUPPORTS_CXX0X)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+else()
+        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif()
+
 #Sets the directory for cmake to find Cmake configration packages,
 #these packages allow for cmake to find libraries that are not included
 #in the standard installation of Cmake. The standard packages can be
@@ -315,7 +327,7 @@ add_executable(tutorial16 ${Tutorial16-Source})
 target_link_libraries(tutorial16 ${GraphicsSamplesLinkerFlags} tinyobjloader)
 
 add_executable(tutorial17 ${Tutorial17-Source})
-target_link_libraries(tutorial17 ${GraphicsSamplesLinkerFlags})
+target_link_libraries(tutorial17 ${GraphicsSamplesLinkerFlags} tinyobjloader)
 
 add_executable(tutorial18 ${Tutorial18-Source})
 target_link_libraries(tutorial18 ${GraphicsSamplesLinkerFlags})

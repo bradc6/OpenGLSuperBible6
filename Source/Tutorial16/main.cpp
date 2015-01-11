@@ -3,7 +3,7 @@
 #include "main.hpp"
 #include <iostream>
 
-#define USE_CHECKERBOARD_TEXTURE 0
+#define USE_CHECKERBOARD_TEXTURE 1
 
 int main(int argc, char* argv[])
 {
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     //Create a instance of a vertex shader (Create a shader)
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     //Load the shader source into our Vertex Shader instance.
-    glShaderSource(vertexShader, 1, (const GLchar **) &sourceVertexShaderBegin, NULL);
+    glShaderSource(vertexShader, 1, (const GLchar **) &sourceVertexShaderBegin, nullptr);
     //Clear the system memory copy of the Vertex Shader Source
     vertexShaderSource.clear();
     //Now to compile the Vertex Shader
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     {
         std::cout << "Failed to compile the vertex shader\n";
         char openGLCompilerError[1024];
-        glGetShaderInfoLog(vertexShader, 1024, NULL, openGLCompilerError);
+        glGetShaderInfoLog(vertexShader, 1024, nullptr, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
         exit(-1);
     }
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
     std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial16/Shaders/Main.fs.glsl));
     const char *sourceFragmentShaderBegin = fragmentShaderSource.c_str();
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, (const GLchar **) &sourceFragmentShaderBegin, NULL);
+    glShaderSource(fragmentShader, 1, (const GLchar **) &sourceFragmentShaderBegin, nullptr);
     fragmentShaderSource.clear();
     glCompileShader(fragmentShader);
     //Get the status of the shader compiler.
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     {
         std::cout << "Failed to compile the fragment shader\n";
         char openGLCompilerError[1024];
-        glGetShaderInfoLog(fragmentShader, 1024, NULL, openGLCompilerError);
+        glGetShaderInfoLog(fragmentShader, 1024, nullptr, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
         exit(-1);
     }
@@ -135,12 +135,12 @@ int main(int argc, char* argv[])
     {
         std::cout << "Failed to linke shader program\n";
         char openGLLinkerError[1024];
-        glGetProgramInfoLog(shaderProgram, 1024, NULL, openGLLinkerError);
+        glGetProgramInfoLog(shaderProgram, 1024, nullptr, openGLLinkerError);
         std::cout << openGLLinkerError << '\n';
         exit(-1);
     }
 
-
+    //Use the shader program that OpenGL compiled and linked.
     glUseProgram(shaderProgram);
 
     //***************************************
@@ -169,6 +169,9 @@ int main(int argc, char* argv[])
     //Set the active OpenGL texture
     glActiveTexture(GL_TEXTURE0);
 
+    //Bind the texture to the context
+    glBindTexture(GL_TEXTURE_2D, mainTexture);
+
     //Allocate texture storage for the image
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, 16, 16);
 
@@ -178,11 +181,11 @@ int main(int argc, char* argv[])
 #else
     //First we need to load a 2d texture into system
     //memory.
-    SDL_Surface *sysMainTexture = NULL;
+    SDL_Surface *sysMainTexture = nullptr;
     GLint mainTextureFormat;
 
     //Load & decode the image into a new surface
-    LoadImage(QUOTE(TEXTUREDIR/MediumSampleTexture.png), sysMainTexture, mainTextureFormat);
+    LoadImage(QUOTE(TEXTUREDIR/VeryLargeSampleTexture.png), sysMainTexture, mainTextureFormat);
 
     GLuint mainTexture = glNULL;
 
@@ -227,14 +230,16 @@ int main(int argc, char* argv[])
                  GL_UNSIGNED_BYTE,
                  sysMainTexture->pixels);*/
 
-    //Generate the mipmaps on the GPU
-    //(Generate the mipmap for the currently bound texture.
-    glGenerateMipmap(GL_TEXTURE_2D);
-
     //Free the surface as the texture is now in the GPU.
     SDL_free(sysMainTexture);
     sysMainTexture = NULL;
+
+
 #endif
+
+    //Generate the mipmaps on the GPU since we will not load any.
+    //(Generate the mipmap for the currently bound texture.
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -252,7 +257,7 @@ int main(int argc, char* argv[])
 
     std::string tinyObjError = tinyobj::LoadObj(shapes,
                                                 materials,
-                                                QUOTE(MODELDIR/torus.obj),
+                                                QUOTE(MODELDIR/TexturedCube.obj),
                                                 QUOTE(MODELDIR));
 
     //Check if any errors occured while loading
@@ -289,11 +294,22 @@ int main(int argc, char* argv[])
     //This function has NOTHING to do with pointers (legacy)
     //Instead it is a pointer to a buffer object that the Vertex Shader
     //will fill up with the data we give it. (We initialize it to 0)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(0,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          0,
+                          nullptr);
 
     //Once we fill the glVertexAttrib buffer with the data we want
     //we will enable it, telling OpenGL to use it instead of glVertexAttrib*()
-    glEnableVertexAttribArray(0);
+    GLint modelPositionAttibuteLocation = glNULL;
+    modelPositionAttibuteLocation = glGetAttribLocation(shaderProgram, "position");
+    if(GL_INVALID_OPERATION == modelPositionAttibuteLocation)
+    {
+        throw "Failed to get Position attribute from the vertex shader";
+    }
+    glEnableVertexAttribArray(modelPositionAttibuteLocation);
 
     //**********************************
     //Setup the Element order to draw in
@@ -312,6 +328,51 @@ int main(int argc, char* argv[])
                   &shapes[0].mesh.indices[0],
                    GL_STATIC_DRAW);
 
+
+    //******************************
+    //Upload the texture coordinates
+    //******************************
+    //First we will get the attribute from the vertex shader
+    GLuint textureCoordinatesBuffer = glNULL;
+
+    glGenBuffers(1, &textureCoordinatesBuffer);
+
+    //Now bind the newly created buffer to the context using the GL_ARRAY_BUFFER
+    //binding point
+    glBindBuffer(GL_ARRAY_BUFFER, textureCoordinatesBuffer);
+
+    //With the buffer bound to our OpenGL context, we can now create the size
+    //of the buffer to be (allocation of size), it will be of data source
+    //cube textureCoordinates, which will be GL_STATIC_DRAW (const) (The data is copied from system memory
+    //to graphics memory)
+    glBufferData(GL_ARRAY_BUFFER, (shapes[0].mesh.texcoords.size() * sizeof(GLfloat)), &shapes[0].mesh.texcoords[0], GL_STATIC_DRAW);
+
+
+    //Once we fill the texturecoordinates buffer with the data we want
+    //we will enable it, telling OpenGL to use it instead of glVertexAttrib*()
+    GLint textureCoordinatesAttibuteLocation = glNULL;
+    textureCoordinatesAttibuteLocation = glGetAttribLocation(shaderProgram, "textureCoordinate");
+    if(GL_INVALID_OPERATION == textureCoordinatesAttibuteLocation)
+    {
+        throw "Failed to get TextureCoordinate attribute from the vertex shader";
+    }
+
+    //Setup the texture coordinates buffer, here we tell OpenGL how
+    //the data is organized.
+    glVertexAttribPointer(
+                textureCoordinatesAttibuteLocation, //The attribute (location) in the vertex shader this buffer will be used
+                2,                                  //The size of each element that is in the bound buffer
+                GL_FLOAT,                           //The type of data that is in the bound buffer
+                GL_FALSE,                           //Determines if OpenGL should normalize the data values.
+                0,                                  //The stride ie. The offset of the bytes between consecutive vertex attributes.
+                nullptr);                                 //The offset of the first attribute in the buffer store. (Offset of first object)
+
+    //Enable the vertex attribute as we have added data to it to be used.
+    glEnableVertexAttribArray(textureCoordinatesAttibuteLocation);
+
+    //***************************
+    //Setup the projection matrix
+    //***************************
     //Get the SDL window width and height
     int windowWidth, windowheight;
     SDL_GetWindowSize(mainWindow, &windowWidth, &windowheight);
@@ -346,13 +407,13 @@ int main(int argc, char* argv[])
     //are too far away on the screen
     glEnable(GL_DEPTH_TEST);
 
-    //Check the deptch of vertices in on Z (Must be less then or equal to 1)
+    //Check the depth of vertices in on Z (Must be less then or equal to 1)
     glDepthFunc(GL_LEQUAL);
 
     //Create a window event in order to know when the mainWindow "Close" is pressed
     SDL_Event *windowEvent = new SDL_Event;
 
-    //Enable wireframe mode, as we don't have sufficent shaders.
+    //Enable wireframe mode to debug vertices
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     while(true)
