@@ -233,28 +233,4 @@ const GLchar *message, GLvoid *userParam)
     std::cout << "GL Debug:" << message << '\n';
 }
 
-//Checkerboard texture pattern.
-#define B 0x00, 0x00, 0x00, 0x00
-#define W 0xFF, 0xFF, 0xFF, 0xFF
-        static const GLubyte checkerBoardTexture[] =
-        {
-            B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
-            W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
-            B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
-            W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
-            B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
-            W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
-            B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
-            W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
-            B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
-            W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
-            B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
-            W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
-            B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
-            W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
-            B, W, B, W, B, W, B, W, B, W, B, W, B, W, B, W,
-            W, B, W, B, W, B, W, B, W, B, W, B, W, B, W, B,
-        };
-#undef B
-#undef W
 #endif

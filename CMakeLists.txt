@@ -131,6 +131,16 @@ set(TUTORIAL17_DIR "${SOURCE_DIR}/Tutorial17")
 set(TUTORIAL18_DIR "${SOURCE_DIR}/Tutorial18")
 set(TUTORIAL19_DIR "${SOURCE_DIR}/Tutorial19")
 set(TUTORIAL20_DIR "${SOURCE_DIR}/Tutorial20")
+set(TUTORIAL21_DIR "${SOURCE_DIR}/Tutorial21")
+set(TUTORIAL22_DIR "${SOURCE_DIR}/Tutorial22")
+set(TUTORIAL23_DIR "${SOURCE_DIR}/Tutorial23")
+set(TUTORIAL24_DIR "${SOURCE_DIR}/Tutorial24")
+set(TUTORIAL25_DIR "${SOURCE_DIR}/Tutorial25")
+set(TUTORIAL26_DIR "${SOURCE_DIR}/Tutorial26")
+set(TUTORIAL27_DIR "${SOURCE_DIR}/Tutorial27")
+set(TUTORIAL28_DIR "${SOURCE_DIR}/Tutorial28")
+set(TUTORIAL29_DIR "${SOURCE_DIR}/Tutorial29")
+set(TUTORIAL30_DIR "${SOURCE_DIR}/Tutorial30")
 
 #Extra tutorials not included in the book.
 set(TUTORIALSDL2IMAGE_DIR "${SOURCE_DIR}/TutorialSDL2Image")
@@ -277,6 +287,56 @@ set(Tutorial20-Source
 	${TUTORIAL20_DIR}/main.cpp
 	)
 
+set(Tutorial21-Source
+        ${TUTORIAL21_DIR}/main.hpp
+        ${TUTORIAL21_DIR}/main.cpp
+        )
+
+set(Tutorial22-Source
+        ${TUTORIAL22_DIR}/main.hpp
+        ${TUTORIAL22_DIR}/main.cpp
+        )
+
+set(Tutorial23-Source
+        ${TUTORIAL23_DIR}/main.hpp
+        ${TUTORIAL23_DIR}/main.cpp
+        )
+
+set(Tutorial24-Source
+        ${TUTORIAL24_DIR}/main.hpp
+        ${TUTORIAL24_DIR}/main.cpp
+        )
+
+set(Tutorial25-Source
+        ${TUTORIAL25_DIR}/main.hpp
+        ${TUTORIAL25_DIR}/main.cpp
+        )
+
+set(Tutorial26-Source
+        ${TUTORIAL26_DIR}/main.hpp
+        ${TUTORIAL26_DIR}/main.cpp
+        )
+
+set(Tutorial27-Source
+        ${TUTORIAL27_DIR}/main.hpp
+        ${TUTORIAL27_DIR}/main.cpp
+        )
+
+set(Tutorial28-Source
+        ${TUTORIAL28_DIR}/main.hpp
+        ${TUTORIAL28_DIR}/main.cpp
+        )
+
+set(Tutorial29-Source
+        ${TUTORIAL29_DIR}/main.hpp
+        ${TUTORIAL29_DIR}/main.cpp
+        )
+
+set(Tutorial30-Source
+        ${TUTORIAL30_DIR}/main.hpp
+        ${TUTORIAL30_DIR}/main.cpp
+        )
+
 set(TutorialSDL2Image-Source
 	${TUTORIALSDL2IMAGE_DIR}/main.hpp
 	${TUTORIALSDL2IMAGE_DIR}/main.cpp
@@ -343,6 +403,36 @@ target_link_libraries(tutorial19 ${GraphicsSamplesLinkerFlags})
 
 add_executable(tutorial20 ${Tutorial20-Source})
 target_link_libraries(tutorial20 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial21 ${Tutorial21-Source})
+target_link_libraries(tutorial21 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial22 ${Tutorial20-Source})
+target_link_libraries(tutorial22 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial23 ${Tutorial23-Source})
+target_link_libraries(tutorial23 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial24 ${Tutorial24-Source})
+target_link_libraries(tutorial24 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial25 ${Tutorial25-Source})
+target_link_libraries(tutorial25 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial26 ${Tutorial26-Source})
+target_link_libraries(tutorial26 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial27 ${Tutorial27-Source})
+target_link_libraries(tutorial27 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial28 ${Tutorial28-Source})
+target_link_libraries(tutorial28 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial29 ${Tutorial29-Source})
+target_link_libraries(tutorial29 ${GraphicsSamplesLinkerFlags})
+
+add_executable(tutorial30 ${Tutorial30-Source})
+target_link_libraries(tutorial30 ${GraphicsSamplesLinkerFlags})
 
 if(SDL2_IMAGE_FOUND)
 add_executable(tutorialSDL2Image ${TutorialSDL2Image-Source})
