@@ -254,16 +254,22 @@ set(Tutorial16-Source
 set(Tutorial17-Source
 	${TUTORIAL17_DIR}/main.hpp
 	${TUTORIAL17_DIR}/main.cpp
+        ${TUTORIAL17_DIR}/Shaders/Main.vs.glsl
+        ${TUTORIAL17_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial18-Source
 	${TUTORIAL18_DIR}/main.hpp
 	${TUTORIAL18_DIR}/main.cpp
+        ${TUTORIAL18_DIR}/Shaders/Main.vs.glsl
+        ${TUTORIAL18_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial19-Source
 	${TUTORIAL19_DIR}/main.hpp
 	${TUTORIAL19_DIR}/main.cpp
+        ${TUTORIAL19_DIR}/Shaders/Main.vs.glsl
+        ${TUTORIAL19_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial20-Source

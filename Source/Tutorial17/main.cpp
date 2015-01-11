@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
     //Lets create a OpenGL window
-    SDL_Window *mainWindow = SDL_CreateWindow("Spinning Object Model", 100, 100, 800, 600, SDL_WINDOW_OPENGL);
+    SDL_Window *mainWindow = SDL_CreateWindow("Spinning Textured Object Model", 100, 100, 800, 600, SDL_WINDOW_OPENGL);
 
     //Check that the SDL/OpenGL window was created
     if(!mainWindow)
@@ -74,8 +74,8 @@ int main(int argc, char* argv[])
     glBindVertexArray(savedVertexAttributes);
 
     //Now lets build a vertex shader
-    std::cout << "Shader Dir: " << QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs) << '\n';
-    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial16/Shaders/Main.vs.glsl));
+    std::cout << "Shader Dir: " << QUOTE(SOURCEDIR/Source/Tutorial17/Shaders/Main.vs) << '\n';
+    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial17/Shaders/Main.vs.glsl));
     //Make a pointer to make glShaderSource happy (I REALLY hate this part of the solution)
     const char *sourceVertexShaderBegin = vertexShaderSource.c_str();
     //Create a instance of a vertex shader (Create a shader)
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
     }
 
     //Now lets build a fragment shader
-    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial16/Shaders/Main.fs.glsl));
+    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial17/Shaders/Main.fs.glsl));
     const char *sourceFragmentShaderBegin = fragmentShaderSource.c_str();
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, (const GLchar **) &sourceFragmentShaderBegin, nullptr);
@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programLinkerStatus);
     if(programLinkerStatus != GL_TRUE)
     {
-        std::cout << "Failed to linke shader program\n";
+        std::cout << "Failed to link shader program\n";
         char openGLLinkerError[1024];
         glGetProgramInfoLog(shaderProgram, 1024, nullptr, openGLLinkerError);
         std::cout << openGLLinkerError << '\n';
