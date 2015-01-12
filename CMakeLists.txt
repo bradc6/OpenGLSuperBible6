@@ -285,6 +285,8 @@ set(Tutorial19-Source
 set(Tutorial20-Source
 	${TUTORIAL20_DIR}/main.hpp
 	${TUTORIAL20_DIR}/main.cpp
+        ${TUTORIAL20_DIR}/Shaders/Main.vs.glsl
+        ${TUTORIAL20_DIR}/Shaders/Main.fs.glsl
 	)
 
 set(Tutorial21-Source
