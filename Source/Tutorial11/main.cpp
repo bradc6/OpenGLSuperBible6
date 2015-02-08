@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
 
     //Now lets build a vertex shader
     std::cout << "Shader Dir: " << QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs) << '\n';
-    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.vs.glsl));
+    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.glsl.vert));
     //Make a pointer to make glShaderSource happy (I REALLY hate this part of the solution)
     const char *sourceVertexShaderBegin = vertexShaderSource.c_str();
     //Create a instance of a vertex shader (Create a shader)
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
     }
 
     //Now lets build a fragment shader
-    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.fs.glsl));
+    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial11/Shaders/Main.glsl.frag));
     const char *sourceFragmentShaderBegin = fragmentShaderSource.c_str();
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, (const GLchar **) &sourceFragmentShaderBegin, NULL);

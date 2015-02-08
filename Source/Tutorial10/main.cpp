@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 
 
     //Now lets build a vertex shader
-    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.vs.glsl));
+    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.glsl.vert));
     //Make a pointer to make glShaderSource happy (I REALLY hate this part of the solution)
     const char *sourceVertexShaderBegin = vertexShaderSource.c_str();
     //Create a instance of a vertex shader (Create a shader)
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
     }
 
     //Now lets build a Tesselation Control Shader
-    std::string tesselationControlShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.tcs.glsl));
+    std::string tesselationControlShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.glsl.tesc));
     const char *sourceTesselationControlShaderBegin = tesselationControlShaderSource.c_str();
     GLuint tesselationControlShader = glCreateShader(GL_TESS_CONTROL_SHADER);
     glShaderSource(tesselationControlShader, 1, (const GLchar **) &sourceTesselationControlShaderBegin, NULL);
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
     }
 
     //Now lets build a Tesselation Evaluation Shader
-    std::string tesselationEvaluationShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.tes.glsl));
+    std::string tesselationEvaluationShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.glsl.tese));
     const char *sourceTesselationEvaluationShaderBegin = tesselationEvaluationShaderSource.c_str();
     GLuint tesselationEvaluationShader = glCreateShader(GL_TESS_EVALUATION_SHADER);
     glShaderSource(tesselationEvaluationShader, 1, (const GLchar **) &sourceTesselationEvaluationShaderBegin, NULL);
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
     }
 
     //Now lets build a geometery shader
-    std::string geometryShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.gs.glsl));
+    std::string geometryShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.glsl.geom));
     const char *sourceGeometryShaderBegin = geometryShaderSource.c_str();
     GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
     glShaderSource(geometryShader, 1, (const GLchar **) &sourceGeometryShaderBegin, NULL);
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
     }
 
     //Now lets build a fragment shader
-    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.fs.glsl));
+    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial10/Shaders/Main.glsl.frag));
     const char *sourceFragmentShaderBegin = fragmentShaderSource.c_str();
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, (const GLchar **) &sourceFragmentShaderBegin, NULL);

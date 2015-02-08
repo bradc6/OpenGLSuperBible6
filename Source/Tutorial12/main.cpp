@@ -121,8 +121,8 @@ int main(int argc, char* argv[])
     glBindVertexArray(savedVertexAttributes);
     
     //Now lets build a vertex shader
-    std::cout << "Vertex Shader Path: " << QUOTE(SOURCEDIR/Source/Tutorial12/Shaders/Main.vs.glsl) << '\n';
-    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial12/Shaders/Main.vs.glsl));
+    std::cout << "Vertex Shader Path: " << QUOTE(SOURCEDIR/Source/Tutorial12/Shaders/Main.glsl.vert) << '\n';
+    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial12/Shaders/Main.glsl.vert));
     //Make a pointer to make glShaderSource happy (I REALLY hate this part of the solution)
     const char *sourceVertexShaderBegin = vertexShaderSource.c_str();
     //Create a instance of a vertex shader (Create a shader)
@@ -147,8 +147,8 @@ int main(int argc, char* argv[])
     }
     
     //Now lets build a fragment shader
-    std::cout << "Fragment Shader Path: " << QUOTE(SOURCEDIR/Source/Tutorial12/Shaders/Main.fs.glsl) << '\n';
-    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial12/Shaders/Main.fs.glsl));
+    std::cout << "Fragment Shader Path: " << QUOTE(SOURCEDIR/Source/Tutorial12/Shaders/Main.glsl.frag) << '\n';
+    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial12/Shaders/Main.glsl.frag));
     const char *sourceFragmentShaderBegin = fragmentShaderSource.c_str();
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, (const GLchar **) &sourceFragmentShaderBegin, NULL);

@@ -2,7 +2,7 @@
 #version 400 core
 
 //Input vertices from a object buffer
-in vec4 position;
+out vec4 position;
 
 //The vertice color data to share with the
 //fragment shader.

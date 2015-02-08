@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
         exit(-1);
     }
 
-    //Request the context be OpenGL 3.2 for our feature set
+    //Request the context be OpenGL 4.0 for our feature set
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
