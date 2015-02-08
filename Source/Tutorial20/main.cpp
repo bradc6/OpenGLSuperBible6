@@ -154,8 +154,6 @@ int main(int argc, char* argv[])
     glGenVertexArrays(1, &mainVertexArray);
     glBindVertexArray(mainVertexArray);
 
-#pragma message ("incomplete Demo")
-
 
     return 0;
 }

@@ -6,9 +6,9 @@
 
 void main(void)
 {
-	const vec4 triangleVertices[] = vec4[](vec4( 0.75, -0.75, 0.5, 1.0),
-										   vec4(-0.75, -0.75, 0.5, 1.0),
-										   vec4( 0.75,  0.75, 0.5, 1.0));
+        const vec4 triangleVertices[] = vec4[]( vec4( 0.75, -0.75, 0.5, 1.0),
+                                                vec4(-0.75, -0.75, 0.5, 1.0),
+                                                vec4( 0.75,  0.75, 0.5, 1.0));
 
 	gl_Position = triangleVertices[gl_VertexID];
 }

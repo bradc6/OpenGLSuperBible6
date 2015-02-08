@@ -68,10 +68,10 @@ int main()
     glBindVertexArray(savedVertexAttributes);
 
     //Now lets build a vertex shader
-    GLuint vertexShader = CompileGLShader(QUOTE(SOURCEDIR/Source/TutorialSDL2Image/Shaders/Main.vs.glsl), GL_VERTEX_SHADER);
+    GLuint vertexShader = CompileGLShader(QUOTE(SOURCEDIR/Source/TutorialSDL2Image/Shaders/Main.glsl.vert), GL_VERTEX_SHADER);
 
     //Now lets build a fragment shader
-    GLuint fragmentShader = CompileGLShader(QUOTE(SOURCEDIR/Source/TutorialSDL2Image/Shaders/Main.fs.glsl), GL_FRAGMENT_SHADER);
+    GLuint fragmentShader = CompileGLShader(QUOTE(SOURCEDIR/Source/TutorialSDL2Image/Shaders/Main.glsl.frag), GL_FRAGMENT_SHADER);
 
     //Now to use the shaders we just compiled, we need to create a shader program
     //(In a sense these are like different, pipelines that when linked can be switched out)

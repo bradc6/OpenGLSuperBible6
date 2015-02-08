@@ -144,6 +144,8 @@ set(TUTORIAL30_DIR "${SOURCE_DIR}/Tutorial30")
 
 #Extra tutorials not included in the book.
 set(TUTORIALSDL2IMAGE_DIR "${SOURCE_DIR}/TutorialSDL2Image")
+set(ENGINE_DIR "${SOURCE_DIR}/Engine")
+set(SIMPLESCENE_DIR "${SOURCE_DIR}/SimpleScene")
 
 set(Tutorial1-Source
 	${TUTORIAL1_DIR}/main.hpp
@@ -250,43 +252,43 @@ set(Tutorial14-Source
 set(Tutorial15-Source
 	${TUTORIAL15_DIR}/main.hpp
 	${TUTORIAL15_DIR}/main.cpp
-    ${TUTORIAL15_DIR}/Shaders/Main.glsl.vert
-    ${TUTORIAL15_DIR}/Shaders/Main.glsl.frag
+        ${TUTORIAL15_DIR}/Shaders/Main.glsl.vert
+        ${TUTORIAL15_DIR}/Shaders/Main.glsl.frag
 	)
 
 set(Tutorial16-Source
 	${TUTORIAL16_DIR}/main.hpp
 	${TUTORIAL16_DIR}/main.cpp
-    ${TUTORIAL16_DIR}/Shaders/Main.glsl.vert
-    ${TUTORIAL16_DIR}/Shaders/Main.glsl.frag
+        ${TUTORIAL16_DIR}/Shaders/Main.glsl.vert
+        ${TUTORIAL16_DIR}/Shaders/Main.glsl.frag
 	)
 
 set(Tutorial17-Source
 	${TUTORIAL17_DIR}/main.hpp
 	${TUTORIAL17_DIR}/main.cpp
-    ${TUTORIAL17_DIR}/Shaders/Main.glsl.vert
-    ${TUTORIAL17_DIR}/Shaders/Main.glsl.frag
+        ${TUTORIAL17_DIR}/Shaders/Main.glsl.vert
+        ${TUTORIAL17_DIR}/Shaders/Main.glsl.frag
 	)
 
 set(Tutorial18-Source
 	${TUTORIAL18_DIR}/main.hpp
 	${TUTORIAL18_DIR}/main.cpp
-    ${TUTORIAL18_DIR}/Shaders/Main.glsl.vert
-    ${TUTORIAL18_DIR}/Shaders/Main.glsl.frag
+        ${TUTORIAL18_DIR}/Shaders/Main.glsl.vert
+        ${TUTORIAL18_DIR}/Shaders/Main.glsl.frag
 	)
 
 set(Tutorial19-Source
 	${TUTORIAL19_DIR}/main.hpp
 	${TUTORIAL19_DIR}/main.cpp
-    ${TUTORIAL19_DIR}/Shaders/Main.glsl.vert
-    ${TUTORIAL19_DIR}/Shaders/Main.glsl.frag
+        ${TUTORIAL19_DIR}/Shaders/Main.glsl.vert
+        ${TUTORIAL19_DIR}/Shaders/Main.glsl.frag
 	)
 
 set(Tutorial20-Source
 	${TUTORIAL20_DIR}/main.hpp
 	${TUTORIAL20_DIR}/main.cpp
-    ${TUTORIAL20_DIR}/Shaders/Main.glsl.vert
-    ${TUTORIAL20_DIR}/Shaders/Main.glsl.frag
+        ${TUTORIAL20_DIR}/Shaders/Main.glsl.vert
+        ${TUTORIAL20_DIR}/Shaders/Main.glsl.frag
 	)
 
 set(Tutorial21-Source
@@ -436,7 +438,40 @@ target_link_libraries(tutorial29 ${GraphicsSamplesLinkerFlags})
 add_executable(tutorial30 ${Tutorial30-Source})
 target_link_libraries(tutorial30 ${GraphicsSamplesLinkerFlags})
 
+
+#Extra examples that are not part of the book
 if(SDL2_IMAGE_FOUND)
 add_executable(tutorialSDL2Image ${TutorialSDL2Image-Source})
 target_link_libraries(tutorialSDL2Image ${GraphicsSamplesLinkerFlags})
 endif()
+
+#A simple rendering engine to try to show off some things I learned
+#via the book.
+#Allows for using the sample rendering engine
+include_directories(${SOURCE_DIR})
+
+set(Engine-Source
+    ${ENGINE_DIR}/Camera/Camera.hpp
+    ${ENGINE_DIR}/Camera/Camera.cpp
+    ${ENGINE_DIR}/Model/Model.hpp
+    ${ENGINE_DIR}/Model/Model.cpp
+    ${ENGINE_DIR}/Model/Model.hpp
+    ${ENGINE_DIR}/Model/Model.cpp
+    ${ENGINE_DIR}/Scene/Scene.hpp
+    ${ENGINE_DIR}/Scene/Scene.cpp
+    ${ENGINE_DIR}/Render/Render.hpp
+    ${ENGINE_DIR}/Render/Render.cpp
+    ${ENGINE_DIR}/Engine.hpp
+)
+
+add_library(Engine ${Engine-Source})
+target_link_libraries(Engine ${GraphicsSamplesLinkerFlags} tinyobjloader)
+
+#Sample Projects using the render engine.
+set(SimpleScene-Source
+    ${SIMPLESCENE_DIR}/main.hpp
+    ${SIMPLESCENE_DIR}/main.cpp
+)
+
+add_executable(SimpleScene ${SimpleScene-Source})
+target_link_libraries(SimpleScene ${GraphicsSamplesLinkerFlags} Engine tinyobjloader)
