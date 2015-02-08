@@ -7,3 +7,6 @@
 [submodule "Libraries/OpenCollada"]
 	path = Libraries/OpenCollada
 	url = https://github.com/bradc6/OpenCOLLADA.git
+[submodule "Libraries/glslang"]
+	path = Libraries/glslang
+	url = https://github.com/bradc6/glslang.git
