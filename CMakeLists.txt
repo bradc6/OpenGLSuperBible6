@@ -141,6 +141,7 @@ set(TUTORIAL27_DIR "${SOURCE_DIR}/Tutorial27")
 set(TUTORIAL28_DIR "${SOURCE_DIR}/Tutorial28")
 set(TUTORIAL29_DIR "${SOURCE_DIR}/Tutorial29")
 set(TUTORIAL30_DIR "${SOURCE_DIR}/Tutorial30")
+set(TUTORIALSEPERATESHADERS_DIR "${SOURCE_DIR}/TutorialSeperateShaders")
 
 #Extra tutorials not included in the book.
 set(TUTORIALSDL2IMAGE_DIR "${SOURCE_DIR}/TutorialSDL2Image")
@@ -348,6 +349,15 @@ set(TutorialSDL2Image-Source
         ${TUTORIALSDL2IMAGE_DIR}/Shaders/Main.glsl.frag
 	)
 
+set(TutorialSeprateShaders-Source
+        ${TUTORIALSEPERATESHADERS_DIR}/main.hpp
+        ${TUTORIALSEPERATESHADERS_DIR}/main.cpp
+        ${TUTORIALSEPERATESHADERS_DIR}/Shaders/Main.glsl.vert
+        ${TUTORIALSEPERATESHADERS_DIR}/Shaders/SimpleFragmentShader.glsl.frag
+        ${TUTORIALSEPERATESHADERS_DIR}/Shaders/TextureCoordinateAware.glsl.frag
+        )
+
+
 add_executable(tutorial1 ${Tutorial1-Source})
 target_link_libraries(tutorial1 ${GraphicsSamplesLinkerFlags})
 
@@ -444,6 +454,12 @@ if(SDL2_IMAGE_FOUND)
 add_executable(tutorialSDL2Image ${TutorialSDL2Image-Source})
 target_link_libraries(tutorialSDL2Image ${GraphicsSamplesLinkerFlags})
 endif()
+
+if(SDL2_IMAGE_FOUND)
+add_executable(tutorialSeprateShaders ${TutorialSeprateShaders-Source})
+target_link_libraries(tutorialSeprateShaders ${GraphicsSamplesLinkerFlags} tinyobjloader)
+endif()
+
 
 #A simple rendering engine to try to show off some things I learned
 #via the book.
