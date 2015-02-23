@@ -91,6 +91,9 @@ int main(int argc, char* argv[])
     //Bind the pipeline for use in the context
     glBindProgramPipeline(mainShaderPipeline);
 
+    //Ensure that the pipeline is good
+    glValidateProgramPipeline(mainShaderPipeline);
+
     //***************************************
     //Load a texture to wrap around our model
     //***************************************
@@ -393,11 +396,17 @@ int main(int argc, char* argv[])
                 }
 
                 if(windowEvent->key.keysym.sym == SDLK_q) {
+                    //Change the fragment shader
                     glUseProgramStages(mainShaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram);
+                    //Revalidate the pipeline (for safety)
+                    glValidateProgramPipeline(mainShaderPipeline);
                 }
 
                 if(windowEvent->key.keysym.sym == SDLK_w) {
+                    //Change the fragment shader
                     glUseProgramStages(mainShaderPipeline, GL_FRAGMENT_SHADER_BIT, simpleFragmentShaderProgram);
+                    //Revalidate the pipeline (for safety)
+                    glValidateProgramPipeline(mainShaderPipeline);
                 }
             }
             default:
