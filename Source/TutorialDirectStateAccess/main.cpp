@@ -55,8 +55,9 @@ int main(int argc, char* argv[])
         std::cout << "GLEW Error: " << glewGetErrorString(glewError) << '\n';
         exit(-1);
     }
-    //Your graphics card must support seperate shader objects
-    assert(GLEW_ARB_separate_shader_objects);
+
+    //Your driver/graphics card must support the direct state access extension
+    assert(GLEW_EXT_direct_state_access);
 
     //With the context set we will setup a OpenGL debug context callback
     glDebugMessageCallbackARB((GLDEBUGPROCARB)gl_debug_callback, NULL);
@@ -75,26 +76,37 @@ int main(int argc, char* argv[])
     //Bind that newly created space in order to be used
     glBindVertexArray(savedVertexAttributes);
 
+    //Now lets build a vertex shader
     std::cout << "Shader Dir: " << QUOTE(SOURCEDIR/Source/Tutorial17/Shaders/Main.glsl.vert) << '\n';
-    //Create our shader programs (Vertex and fragment programs)
-    GLuint vertexShaderProgram = CreateShaderProgram(QUOTE(SOURCEDIR/Source/TutorialSeperateShaders/Shaders/Main.glsl.vert), GL_VERTEX_SHADER);
-    GLuint fragmentShaderProgram = CreateShaderProgram(QUOTE(SOURCEDIR/Source/TutorialSeperateShaders/Shaders/TextureCoordinateAware.glsl.frag), GL_FRAGMENT_SHADER);
-    GLuint simpleFragmentShaderProgram = CreateShaderProgram(QUOTE(SOURCEDIR/Source/TutorialSeperateShaders/Shaders/SimpleFragmentShader.glsl.frag), GL_FRAGMENT_SHADER);
+    GLuint vertexShader = CompileGLShader(QUOTE(SOURCEDIR/Source/Tutorial17/Shaders/Main.glsl.vert), GL_VERTEX_SHADER);
+    GLuint fragmentShader = CompileGLShader(QUOTE(SOURCEDIR/Source/Tutorial17/Shaders/Main.glsl.frag),GL_FRAGMENT_SHADER);
 
+    //Now to use the shaders we just compiled, we need to create a shader program
+    //(In a sense these are like different, pipelines that when linked can be switched out)
+    GLuint shaderProgram = glCreateProgram();
 
-    //Create a OpenGL shader pipeline
-    GLuint mainShaderPipeline = glNULL;
-    glGenProgramPipelines(1, &mainShaderPipeline);
+    //Attach shaders to our newly created shader program
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
 
-    //Lets apply the shader programs from before and use them in our pipeline
-    glUseProgramStages(mainShaderPipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram);
-    glUseProgramStages(mainShaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram);
+    //Link the Shader Program to create a executable shader pipeline
+    //for the graphics card t ouse.
+    glLinkProgram(shaderProgram);
+    //Ensure that the program linked successfully
+    GLint programLinkerStatus;
+    //Get the status of the shader program linker.
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programLinkerStatus);
+    if(programLinkerStatus != GL_TRUE)
+    {
+        std::cout << "Failed to link shader program\n";
+        char openGLLinkerError[1024];
+        glGetProgramInfoLog(shaderProgram, 1024, nullptr, openGLLinkerError);
+        std::cout << openGLLinkerError << '\n';
+        exit(-1);
+    }
 
-    //Bind the pipeline for use in the context
-    glBindProgramPipeline(mainShaderPipeline);
-
-    //Ensure that the pipeline is good
-    glValidateProgramPipeline(mainShaderPipeline);
+    //Use the shader program that OpenGL compiled and linked.
+    glUseProgram(shaderProgram);
 
     //***************************************
     //Load a texture to wrap around our model
@@ -104,7 +116,7 @@ int main(int argc, char* argv[])
     GLuint main2DSampler = glNULL;
 
     //Get the location of the uniform
-    main2DSampler = glGetUniformLocation(fragmentShaderProgram, "samplerTexture");
+    main2DSampler = glGetUniformLocation(shaderProgram, "samplerTexture");
     if(main2DSampler == GL_INVALID_VALUE)
     {
             std::cout << "The value was not generated in the current shader program";
@@ -112,8 +124,7 @@ int main(int argc, char* argv[])
     }
 
     //Set it to Zero?
-    //glUniform1i(main2DSampler, 0);
-    glProgramUniform1i(fragmentShaderProgram, main2DSampler, 0);
+    glUniform1i(main2DSampler, 0);
 
     //*********************************
     //Simple Checkboard texture pattern
@@ -262,7 +273,7 @@ int main(int argc, char* argv[])
     //Once we fill the glVertexAttrib buffer with the data we want
     //we will enable it, telling OpenGL to use it instead of glVertexAttrib*()
     GLint modelPositionAttibuteLocation = glNULL;
-    modelPositionAttibuteLocation = glGetAttribLocation(vertexShaderProgram, "position");
+    modelPositionAttibuteLocation = glGetAttribLocation(shaderProgram, "position");
     if(GL_INVALID_OPERATION == modelPositionAttibuteLocation)
     {
         throw "Failed to get Position attribute from the vertex shader";
@@ -309,7 +320,7 @@ int main(int argc, char* argv[])
     //Once we fill the texturecoordinates buffer with the data we want
     //we will enable it, telling OpenGL to use it instead of glVertexAttrib*()
     GLint textureCoordinatesAttibuteLocation = glNULL;
-    textureCoordinatesAttibuteLocation = glGetAttribLocation(vertexShaderProgram, "textureCoordinate");
+    textureCoordinatesAttibuteLocation = glGetAttribLocation(shaderProgram, "textureCoordinate");
     if(GL_INVALID_OPERATION == textureCoordinatesAttibuteLocation)
     {
         throw "Failed to get TextureCoordinate attribute from the vertex shader";
@@ -336,7 +347,7 @@ int main(int argc, char* argv[])
     SDL_GetWindowSize(mainWindow, &windowWidth, &windowheight);
 
     //Get the projection matrix Uniform location from the Vertex Shader
-    GLint projectionMatrixLocation = glGetUniformLocation(vertexShaderProgram, "projectionMatrix");
+    GLint projectionMatrixLocation = glGetUniformLocation(shaderProgram, "projectionMatrix");
 
     if(projectionMatrixLocation == -1)
     {
@@ -351,10 +362,10 @@ int main(int argc, char* argv[])
     glm::mat4 projectionMatrix = glm::perspective(50.0f, windowAspectRatio, 0.1f, 1000.0f);
 
     //Update the Vertex Shader Uniform with our projectionMatrix
-    glProgramUniformMatrix4fv(vertexShaderProgram, projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+    glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
     //Get the model view matrix Uniform location from the Vertex Shader
-    GLint modelViewMatrixLocation = glGetUniformLocation(vertexShaderProgram, "modelViewMatrix");
+    GLint modelViewMatrixLocation = glGetUniformLocation(shaderProgram, "modelViewMatrix");
     if(modelViewMatrixLocation == -1)
     {
         std::cout << "Could not find modelViewMatrix Uniform definition!\n";
@@ -375,16 +386,15 @@ int main(int argc, char* argv[])
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 
-    bool running = true;
 
-    while(running)
+
+    while(true)
     {
         if(SDL_PollEvent(windowEvent))
         {
             switch(windowEvent->type) {
             case SDL_QUIT:
             {
-                running = false;
                 break;
             }
             case SDL_KEYDOWN:
@@ -395,20 +405,6 @@ int main(int argc, char* argv[])
 
                 if(windowEvent->key.keysym.sym == SDLK_2) {
                     glBindTexture(GL_TEXTURE_2D, checkBoardTexture);
-                }
-
-                if(windowEvent->key.keysym.sym == SDLK_q) {
-                    //Change the fragment shader
-                    glUseProgramStages(mainShaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram);
-                    //Revalidate the pipeline (for safety)
-                    glValidateProgramPipeline(mainShaderPipeline);
-                }
-
-                if(windowEvent->key.keysym.sym == SDLK_w) {
-                    //Change the fragment shader
-                    glUseProgramStages(mainShaderPipeline, GL_FRAGMENT_SHADER_BIT, simpleFragmentShaderProgram);
-                    //Revalidate the pipeline (for safety)
-                    glValidateProgramPipeline(mainShaderPipeline);
                 }
             }
             default:
@@ -440,25 +436,24 @@ int main(int argc, char* argv[])
                                     glm::rotate((float)time * 45.0f, glm::vec3(0.0f, 1.0f, 0.0f)) *
                                     glm::rotate((float)time * 81.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-
-        glProgramUniformMatrix4fv(vertexShaderProgram, modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
+        glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
 
         glDrawElements(GL_TRIANGLES, shapes[0].mesh.indices.size(), GL_UNSIGNED_INT, 0);
         SDL_GL_SwapWindow(mainWindow);
     }
 
-    //Clean Up shader pipelines & programs
-    glDeleteProgramPipelines(1, &mainShaderPipeline);
-    glDeleteProgram(fragmentShaderProgram);
-    glDeleteProgram(vertexShaderProgram);
+    //Clean Up shaders
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
 
-    //Delete the buffers
     glDeleteBuffers(1, &vertexObjectBuffer);
     glDeleteBuffers(1, &elementBufferObject);
     glDeleteBuffers(1, &textureCoordinatesBuffer);
 
     glDeleteTextures(1, &loadedImageTexture);
     glDeleteTextures(1, &checkBoardTexture);
+
+    glDeleteProgram(shaderProgram);
 
     //Clean up our data structures
     SDL_GL_DeleteContext(mainContext);

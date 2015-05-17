@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TUTORIAL17_MAIN_Header
+#define TUTORIAL17_MAIN_Header
 
 //GLEW must be included before GL.h (or SDL_opengl.h)
 #include <GL/glew.h>
@@ -169,45 +170,6 @@ GLuint CompileGLShader(std::string shaderFilePath, GLint shaderType)
     return targetShader;
 }
 
-//!Creates a serperable shader program
-GLuint CreateShaderProgram(std::string shaderSourceFilePath, GLint shaderType)
-{
-    //Get a shader loaded->compiled
-    GLuint compiledShader = CompileGLShader(shaderSourceFilePath, shaderType);
-
-    //Create a program
-    GLuint shaderProgram = glCreateProgram();
-
-    //Set the program's attribute to be a seperated shader program
-    //(Otherwise linking will fail as the program shader pipeline is incomplete)
-    glProgramParameteri(shaderProgram, GL_PROGRAM_SEPARABLE, GL_TRUE);
-
-    //Attach out single shader to the program
-    glAttachShader(shaderProgram, compiledShader);
-
-    //Link the resulting program
-    glLinkProgram(shaderProgram);
-
-    //Ensure that the program linked successfully
-    GLint programLinkerStatus;
-    //Get the status of the shader program linker.
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programLinkerStatus);
-    if(programLinkerStatus != GL_TRUE)
-    {
-        std::cout << "Failed to link shader program\n";
-        char openGLLinkerError[1024];
-        glGetProgramInfoLog(shaderProgram, 1024, nullptr, openGLLinkerError);
-        std::cout << openGLLinkerError << '\n';
-        exit(-1);
-    }
-
-    //Now that the shader program has been linked successfully we will delete our
-    //shader object.
-    glDeleteShader(compiledShader);
-
-    return shaderProgram;
-}
-
 //!Loads the image to system memory,
 /*!Loads a GLSL shader and compiles the shader
  * \pre The image filepath must be a valid filesystem path to a valid image
@@ -268,8 +230,7 @@ void LoadImage(const std::string &imageFilePath, SDL_Surface *&targetSurface, GL
 void GLAPIENTRY gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
 const GLchar *message, GLvoid *userParam)
 {
-    std::string mainMessage = message;
-    std::cout << "GL Debug:" << mainMessage << '\n';
+    std::cout << "GL Debug:" << message << '\n';
 }
 
 //Checkerboard texture pattern.
@@ -297,3 +258,4 @@ const GLchar *message, GLvoid *userParam)
 #undef B
 #undef W
 
+#endif

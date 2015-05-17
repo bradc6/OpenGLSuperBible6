@@ -16,14 +16,11 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 #Use C++11 if possible (or the most recent that we can use
 include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-#elseif(COMPILER_SUPPORTS_CXX0X)
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
+if(COMPILER_SUPPORTS_CXX14)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 else()
-        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+        message(FATAL "The compiler ${CMAKE_CXX_COMPILER} has no C++14 support. Please use a different C++ compiler.")
 endif()
 
 #Sets the directory for cmake to find Cmake configration packages,
@@ -141,12 +138,13 @@ set(TUTORIAL27_DIR "${SOURCE_DIR}/Tutorial27")
 set(TUTORIAL28_DIR "${SOURCE_DIR}/Tutorial28")
 set(TUTORIAL29_DIR "${SOURCE_DIR}/Tutorial29")
 set(TUTORIAL30_DIR "${SOURCE_DIR}/Tutorial30")
-set(TUTORIALSEPERATESHADERS_DIR "${SOURCE_DIR}/TutorialSeperateShaders")
 
 #Extra tutorials not included in the book.
 set(TUTORIALSDL2IMAGE_DIR "${SOURCE_DIR}/TutorialSDL2Image")
 set(ENGINE_DIR "${SOURCE_DIR}/Engine")
 set(SIMPLESCENE_DIR "${SOURCE_DIR}/SimpleScene")
+set(TUTORIALSEPERATESHADERS_DIR "${SOURCE_DIR}/TutorialSeperateShaders")
+set(TUTORIALDIRECTSTATEACCESS_DIR "${SOURCE_DIR}/TutorialDirectStateAccess")
 
 set(Tutorial1-Source
 	${TUTORIAL1_DIR}/main.hpp
@@ -358,6 +356,14 @@ set(TutorialSeprateShaders-Source
         )
 
 
+
+set(TutorialDirectStateAccess-Source
+        ${TUTORIALDIRECTSTATEACCESS_DIR}/main.hpp
+        ${TUTORIALDIRECTSTATEACCESS_DIR}/main.cpp
+        ${TUTORIALDIRECTSTATEACCESS_DIR}/Shaders/Main.glsl.vert
+        ${TUTORIALDIRECTSTATEACCESS_DIR}/Shaders/Main.glsl.frag
+        )
+
 add_executable(tutorial1 ${Tutorial1-Source})
 target_link_libraries(tutorial1 ${GraphicsSamplesLinkerFlags})
 
@@ -460,6 +466,10 @@ add_executable(tutorialSeprateShaders ${TutorialSeprateShaders-Source})
 target_link_libraries(tutorialSeprateShaders ${GraphicsSamplesLinkerFlags} tinyobjloader)
 endif()
 
+if(SDL2_IMAGE_FOUND)
+add_executable(tutorialDirectStateAccess ${TutorialDirectStateAccess-Source})
+target_link_libraries(tutorialDirectStateAccess ${GraphicsSamplesLinkerFlags} tinyobjloader)
+endif()
 
 #A simple rendering engine to try to show off some things I learned
 #via the book.
