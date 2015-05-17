@@ -19,7 +19,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo add-apt-repository -y ppa:zoogie/sdl2-snapshots; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then  sudo apt-get update && sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libglm-dev; fi
   #We need to install a version of GLEw from source that has OpenGL 4.5
-  - if [ $TRAVIS_OS_NAME == linux]; then sudo apt-get install libXmu-dev libXi-dev libgl-dev dos2unix wget && git clone --depth=3 https://github.com/nigels-com/glew.git glew && cd glew && sudo make install && cd ..; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install libXmu-dev libXi-dev libgl-dev dos2unix wget && git clone --depth=3 https://github.com/nigels-com/glew.git glew && cd glew && sudo make install && cd ..; fi
 
 before_script:
   - mkdir build
