@@ -1,7 +1,5 @@
-//Load up a model and wrap textures around it.
-
+//An example of using direct state access.
 #include "main.hpp"
-#include <iostream>
 
 #define USE_CHECKERBOARD_TEXTURE 1
 
@@ -59,8 +57,15 @@ int main(int argc, char* argv[])
     //Your driver/graphics card must support the direct state access extension
     assert(GLEW_EXT_direct_state_access);
 
+    //Your driver/graphics card must support the debugging
+    assert(GLEW_KHR_debug);
+
+    //Enable the debugger extensions
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
     //With the context set we will setup a OpenGL debug context callback
-    glDebugMessageCallbackARB((GLDEBUGPROCARB)gl_debug_callback, NULL);
+    glDebugMessageCallback((GLDEBUGPROCARB)gl_debug_callback, NULL);
 
     //DO SOME OPENGL STUFF HERE
 
@@ -142,15 +147,15 @@ int main(int argc, char* argv[])
     //"Update"/Upload the data to the GPU
     glTexSubImage2D(GL_TEXTURE_2D, 0,0,0,16,16, GL_RGBA, GL_UNSIGNED_BYTE, checkerBoardTexture);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
+    glTextureParameteriEXT(checkBoardTexture, GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+    glTextureParameteriEXT(checkBoardTexture, GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
 
     //Generate the mipmaps on the GPU since we will not load any.
     //(Generate the mipmap for the currently bound texture.
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTextureParameteriEXT(checkBoardTexture, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTextureParameteriEXT(checkBoardTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     //First we need to load a 2d texture into system
     //memory.
@@ -203,22 +208,22 @@ int main(int argc, char* argv[])
     sysMainTexture = NULL;
 
     //Set the mipmap levels
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
+    glTextureParameteriEXT(loadedImageTexture, GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+    glTextureParameteriEXT(loadedImageTexture, GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
 
     //Generate the mipmaps on the GPU since we will not load any.
     //(Generate the mipmap for the currently bound texture.
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTextureParameteriEXT(loadedImageTexture, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTextureParameteriEXT(loadedImageTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     //**********************************************
     //Create a vertex array and upload it to the GPU
     //**********************************************
 
     //We will be using TinyObjLoader, as we don't really want to
-    //know the wavefront obj spec.
+    //parse the wavefront obj spec.
 
     //Load the shapes and materials (Even though we will not use the materials)
     std::vector<tinyobj::shape_t> shapes;
@@ -385,20 +390,24 @@ int main(int argc, char* argv[])
     //Enable wireframe mode to debug vertices
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-
-
-
-    while(true)
+    bool runRender = true;
+    while(runRender)
     {
         if(SDL_PollEvent(windowEvent))
         {
             switch(windowEvent->type) {
             case SDL_QUIT:
             {
+                runRender = false;
                 break;
             }
             case SDL_KEYDOWN:
             {
+                if(windowEvent->key.keysym.sym == SDLK_ESCAPE) {
+                    runRender = false;
+                    break;
+                }
+
                 if(windowEvent->key.keysym.sym == SDLK_1) {
                     glBindTexture(GL_TEXTURE_2D, loadedImageTexture);
                 }
@@ -406,6 +415,33 @@ int main(int argc, char* argv[])
                 if(windowEvent->key.keysym.sym == SDLK_2) {
                     glBindTexture(GL_TEXTURE_2D, checkBoardTexture);
                 }
+
+
+                //Change the filter of the loaded image (kitten)
+                if(windowEvent->key.keysym.sym == SDLK_q) {
+                    GLint filterMode;
+                    glGetTextureParameterivEXT(loadedImageTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, &filterMode);
+                    if(filterMode == GL_NEAREST)
+                        glTextureParameteriEXT(loadedImageTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                    else
+                        glTextureParameteriEXT(loadedImageTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                }
+
+                //DSA Changing the texture
+                //To demo this, view the the checkerboard pattern,(2) then switch back to
+                //to kitten (1), then change the checkerboard's MAG filter(w) then return to
+                //the checkerboard. Notice there is no binding occuring when getting/setting the parameters.
+                //Changes the filter of the checkerboard texture
+                if(windowEvent->key.keysym.sym == SDLK_w) {
+                    GLint filterMode;
+                    glGetTextureParameterivEXT(checkBoardTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, &filterMode);
+                    if(filterMode == GL_NEAREST)
+                        glTextureParameteriEXT(checkBoardTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                    else
+                        glTextureParameteriEXT(checkBoardTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                }
+
+                break;
             }
             default:
             {

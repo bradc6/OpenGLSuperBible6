@@ -389,6 +389,10 @@ int main(int argc, char* argv[])
             }
             case SDL_KEYDOWN:
             {
+                if(windowEvent->key.keysym.sym == SDLK_ESCAPE) {
+                    running = false;
+                }
+
                 if(windowEvent->key.keysym.sym == SDLK_1) {
                     glBindTexture(GL_TEXTURE_2D, loadedImageTexture);
                 }
@@ -410,6 +414,7 @@ int main(int argc, char* argv[])
                     //Revalidate the pipeline (for safety)
                     glValidateProgramPipeline(mainShaderPipeline);
                 }
+                break;
             }
             default:
             {
