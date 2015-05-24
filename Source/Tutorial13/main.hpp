@@ -4,18 +4,11 @@
 //GLEW must be included before GL.h (or SDL_opengl.h)
 #include <GL/glew.h>
 
-//Approx conversion from Degrees to Radians
-#define degreesToRadians(targetDegree) targetDegree*(3.141592f/180.0f)
-
-//Force the use of Radians only
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
 #include <iostream>
+#include <cassert>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -134,7 +127,7 @@ GLuint CompileGLShader(std::string shaderFilePath, GLint shaderType)
         char openGLCompilerError[1024];
         glGetShaderInfoLog(targetShader, 1024, NULL, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
     
     return targetShader;

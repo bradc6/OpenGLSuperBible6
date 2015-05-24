@@ -3,10 +3,8 @@
 //GLEW must be included before GL.h (or SDL_opengl.h)
 #include <GL/glew.h>
 
-//Approx conversion from Degrees to Radians
-#define degreesToRadians(targetDegree) targetDegree*(3.141592f/180.0f)
-
 //Force the use of Radians only
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -18,6 +16,7 @@
 #include <tiny_obj_loader.h>
 
 #include <iostream>
+#include <cassert>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -163,7 +162,7 @@ GLuint CompileGLShader(std::string shaderFilePath, GLint shaderType)
         char openGLCompilerError[1024];
         glGetShaderInfoLog(targetShader, 1024, NULL, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     return targetShader;
@@ -198,7 +197,7 @@ GLuint CreateShaderProgram(std::string shaderSourceFilePath, GLint shaderType)
         char openGLLinkerError[1024];
         glGetProgramInfoLog(shaderProgram, 1024, nullptr, openGLLinkerError);
         std::cout << openGLLinkerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Now that the shader program has been linked successfully we will delete our

@@ -18,6 +18,7 @@
 #include <SDL2/SDL_image.h>
 
 #include <iostream>
+#include <cassert>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -136,7 +137,7 @@ GLuint CompileGLShader(std::string shaderFilePath, GLint shaderType)
         char openGLCompilerError[1024];
         glGetShaderInfoLog(targetShader, 1024, NULL, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     return targetShader;

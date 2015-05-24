@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
         std::cout << "SDL was unable to initialize, fail out\n";
-        exit(-1);
+        assert(false);
     }
 
     //Request the context be OpenGL 4.0 for our feature set
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
     if(!mainWindow)
     {
         std::cout << "The SDL_CreateWindow method failed\n";
-        exit(-1);
+        assert(false);
     }
 
     //The OpenGL Context (instance of OpenGL) that we will use
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     if(glewInit() != GLEW_OK)
     {
         std::cout << "GLEW failed to initialize\n";
-        exit(-1);
+        assert(false);
     }
 
     //DO SOME OPENGL STUFF HERE

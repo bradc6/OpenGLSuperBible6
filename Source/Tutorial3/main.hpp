@@ -8,6 +8,7 @@
 #include <SDL2/SDL_opengl.h>
 
 #include <iostream>
+#include <cassert>
 #include <string>
 #include <sstream>
 #include <fstream>

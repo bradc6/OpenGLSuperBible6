@@ -10,7 +10,7 @@ int main()
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
         std::cout << "SDL was unable to initialize, fail out\n";
-        exit(-1);
+        assert(false);
     }
     
     //Request the context be OpenGL 3.2 for our feature set
@@ -25,7 +25,7 @@ int main()
     if(!mainWindow)
     {
         std::cout << "The SDL_CreateWindow method failed\n";
-        exit(-1);
+        assert(false);
     }
     
     //The OpenGL Context (instance of OpenGL) that we will use
@@ -36,7 +36,7 @@ int main()
     {
         
         std::cout << SDL_GetError() << '\n';
-        exit(-1);
+        assert(false);
     }
     
     //Force GLEW to use experimental draw calls, but they are supported by the card
@@ -48,7 +48,7 @@ int main()
     if(GLEW_OK != glewError)
     {
         std::cout << "GLEW Error: " << glewGetErrorString(glewError) << '\n';
-        exit(-1);
+        assert(false);
     }
     
     //DO SOME OPENGL STUFF HERE
@@ -89,7 +89,7 @@ int main()
         char openGLLinkerError[1024];
         glGetProgramInfoLog(shaderProgram, 1024, NULL, openGLLinkerError);
         std::cout << openGLLinkerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     
@@ -162,7 +162,7 @@ int main()
         
         
         std::cout << "libktx failed to load the ktx image!!\n";
-        exit(-1);
+        assert(false);
     }
 
     glEnable(ktxTexture);

@@ -10,11 +10,7 @@ int main(int argc, char* argv[])
     std::cout << programDescription << '\n';
 
     //Initialize the graphics portion of SDL
-    if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
-    {
-        std::cout << "SDL was unable to initialize, fail out\n";
-        exit(-1);
-    }
+    assert(SDL_InitSubSystem(SDL_INIT_VIDEO) >= 0); //"SDL was unable to initialize"
 
     //Request the context be OpenGL 4.0 for our feature set
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -26,22 +22,13 @@ int main(int argc, char* argv[])
     SDL_Window *mainWindow = SDL_CreateWindow(programDescription.c_str(), 100, 100, 800, 600, SDL_WINDOW_OPENGL);
 
     //Check that the SDL/OpenGL window was created
-    if(!mainWindow)
-    {
-        std::cout << "The SDL_CreateWindow method failed\n";
-        exit(-1);
-    }
+    assert(mainWindow); //The SDL_CreateWindow method failed
 
     //The OpenGL Context (instance of OpenGL) that we will use
     SDL_GLContext mainContext = SDL_GL_CreateContext(mainWindow);
     SDL_GL_MakeCurrent(mainWindow, mainContext);
 
-    if(!mainContext)
-    {
-
-        std::cout << SDL_GetError() << '\n';
-        exit(-1);
-    }
+    assert(mainContext); //Could not create OpenGL context
 
     //Force GLEW to use experimental draw calls, but they are supported by the card
     glewExperimental = true;
@@ -52,7 +39,7 @@ int main(int argc, char* argv[])
     if(GLEW_OK != glewError)
     {
         std::cout << "GLEW Error: " << glewGetErrorString(glewError) << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //With the context set we will setup a OpenGL debug context callback
@@ -95,7 +82,7 @@ int main(int argc, char* argv[])
         char openGLCompilerError[1024];
         glGetShaderInfoLog(vertexShader, 1024, nullptr, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Now lets build a fragment shader
@@ -113,7 +100,7 @@ int main(int argc, char* argv[])
         char openGLCompilerError[1024];
         glGetShaderInfoLog(fragmentShader, 1024, nullptr, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Now to use the shaders we just compiled, we need to create a shader program
@@ -137,7 +124,7 @@ int main(int argc, char* argv[])
         char openGLLinkerError[1024];
         glGetProgramInfoLog(shaderProgram, 1024, nullptr, openGLLinkerError);
         std::cout << openGLLinkerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Use the shader program that OpenGL compiled and linked.

@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
         std::cout << "SDL was unable to initialize, fail out\n";
-        exit(-1);
+        assert(false);
     }
 
     //Request the context be OpenGL 4.0 for our feature set
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
     if(!mainWindow)
     {
         std::cout << "The SDL_CreateWindow method failed\n";
-        exit(-1);
+        assert(false);
     }
 
     //The OpenGL Context (instance of OpenGL) that we will use
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     {
 
         std::cout << SDL_GetError() << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Force GLEW to use experimental draw calls, but they are supported by the card
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     if(GLEW_OK != glewError)
     {
         std::cout << "GLEW Error: " << glewGetErrorString(glewError) << '\n';
-        exit(-1);
+        assert(false);
     }
     //Your graphics card must support seperate shader objects
     assert(GLEW_ARB_separate_shader_objects);
@@ -341,14 +341,14 @@ int main(int argc, char* argv[])
     if(projectionMatrixLocation == -1)
     {
         std::cout << "Could not find projectionMatrix Uniform definition!\n";
-        exit(-1);
+        assert(false);
     }
 
     //Now to calculate the aspect ratio of the window
     float windowAspectRatio = (float) windowWidth / (float) windowheight;
 
     //Create a projection matrix based on the aspect ratio
-    glm::mat4 projectionMatrix = glm::perspective(50.0f, windowAspectRatio, 0.1f, 1000.0f);
+    glm::mat4 projectionMatrix = glm::perspective(float(M_PI / 3.60), windowAspectRatio, 0.1f, 1000.0f);
 
     //Update the Vertex Shader Uniform with our projectionMatrix
     glProgramUniformMatrix4fv(vertexShaderProgram, projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -358,7 +358,7 @@ int main(int argc, char* argv[])
     if(modelViewMatrixLocation == -1)
     {
         std::cout << "Could not find modelViewMatrix Uniform definition!\n";
-        exit(-1);
+        assert(false);
     }
 
     //Enable the use of Depth testing to check if certain objects
@@ -435,10 +435,10 @@ int main(int argc, char* argv[])
         GLfloat slowTime = time / 3.0f;
         glm::mat4 modelViewMatrix = glm::translate(glm::vec3(0.0f, 0.0f, -4.0f)) *
                                     glm::translate(glm::vec3(sinf(2.1f * slowTime) * 0.5f,
-                                                    cosf(1.7f * slowTime) * 0.5f,
-                                                (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) *
-                                    glm::rotate((float)time * 45.0f, glm::vec3(0.0f, 1.0f, 0.0f)) *
-                                    glm::rotate((float)time * 81.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+                                                   cosf(1.7f * slowTime) * 0.5f,
+                                                   (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) *
+                                    glm::rotate(float(time * (M_PI/4)), glm::vec3(0.0f, 1.0f, 0.0f)) *
+                                    glm::rotate(float(time * (M_PI/2.22)), glm::vec3(1.0f, 0.0f, 0.0f));
 
 
         glProgramUniformMatrix4fv(vertexShaderProgram, modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));

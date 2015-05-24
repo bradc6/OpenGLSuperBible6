@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
         std::cout << "SDL was unable to initialize, fail out\n";
-        exit(-1);
+        assert(false);
     }
 
     //Request the context be OpenGL 4.0 for our feature set
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     if(!mainWindow)
     {
         std::cout << "The SDL_CreateWindow method failed\n";
-        exit(-1);
+        assert(false);
     }
 
     //The OpenGL Context (instance of OpenGL) that we will use
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     {
 
         std::cout << SDL_GetError() << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Force GLEW to use experimental draw calls, but they are supported by the card
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     if(GLEW_OK != glewError)
     {
         std::cout << "GLEW Error: " << glewGetErrorString(glewError) << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //With the context set we will setup a OpenGL debug context callback
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
         char openGLCompilerError[1024];
         glGetShaderInfoLog(vertexShader, 1024, nullptr, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Now lets build a fragment shader
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
         char openGLCompilerError[1024];
         glGetShaderInfoLog(fragmentShader, 1024, nullptr, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Now to use the shaders we just compiled, we need to create a shader program
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
         char openGLLinkerError[1024];
         glGetProgramInfoLog(shaderProgram, 1024, nullptr, openGLLinkerError);
         std::cout << openGLLinkerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Use the shader program that OpenGL compiled and linked.
@@ -383,14 +383,14 @@ int main(int argc, char* argv[])
     if(projectionMatrixLocation == -1)
     {
         std::cout << "Could not find projectionMatrix Uniform definition!\n";
-        exit(-1);
+        assert(false);
     }
 
     //Now to calculate the aspect ratio of the window
     float windowAspectRatio = (float) windowWidth / (float) windowheight;
 
     //Create a projection matrix based on the aspect ratio
-    glm::mat4 projectionMatrix = glm::perspective(50.0f, windowAspectRatio, 0.1f, 1000.0f);
+    glm::mat4 projectionMatrix = glm::perspective(float(M_PI / 3.60), windowAspectRatio, 0.1f, 1000.0f);
 
     //Update the Vertex Shader Uniform with our projectionMatrix
     glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -400,7 +400,7 @@ int main(int argc, char* argv[])
     if(modelViewMatrixLocation == -1)
     {
         std::cout << "Could not find modelViewMatrix Uniform definition!\n";
-        exit(-1);
+        assert(false);
     }
 
     //Enable the use of Depth testing to check if certain objects
@@ -445,8 +445,8 @@ int main(int argc, char* argv[])
                                     glm::translate(glm::vec3(sinf(2.1f * slowTime) * 0.5f,
                                                     cosf(1.7f * slowTime) * 0.5f,
                                                 (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) *
-                                    glm::rotate((float)time * 45.0f, glm::vec3(0.0f, 1.0f, 0.0f)) *
-                                    glm::rotate((float)time * 81.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+                                    glm::rotate(float(time * (M_PI/4)), glm::vec3(0.0f, 1.0f, 0.0f)) *
+                                    glm::rotate(float(time * (M_PI/2.22)), glm::vec3(1.0f, 0.0f, 0.0f));
 
         glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
 

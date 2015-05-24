@@ -4,6 +4,7 @@
 //GLEW must be included before GL.h (or SDL_opengl.h)
 #include <GL/glew.h>
 
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -11,6 +12,8 @@
 #include <SDL2/SDL_opengl.h>
 
 #include <iostream>
+#include <cassert>
+#include <cmath>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -22,6 +25,8 @@
 #ifdef FILE_ARG
 #include QUOTE(FILE_ARG)
 #endif
+
+#define degreesToRadians(x) x*(M_PI/180.0f)
 
 //!Load a file into a string
 /*!Load a file into a string, which in turn can be

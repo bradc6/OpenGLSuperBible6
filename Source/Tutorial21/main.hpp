@@ -19,6 +19,7 @@
 #include <tiny_obj_loader.h>
 
 #include <iostream>
+#include <cassert>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -164,7 +165,7 @@ GLuint CompileGLShader(std::string shaderFilePath, GLint shaderType)
         char openGLCompilerError[1024];
         glGetShaderInfoLog(targetShader, 1024, NULL, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     return targetShader;

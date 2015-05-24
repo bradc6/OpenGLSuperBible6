@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
         std::cout << "SDL was unable to initialize, fail out\n";
-        exit(-1);
+        assert(false);
     }
 
     //Request the context be OpenGL 4.0 for our feature set
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     if(!mainWindow)
     {
         std::cout << "The SDL_CreateWindow method failed\n";
-        exit(-1);
+        assert(false);
     }
 
     //The OpenGL Context (instance of OpenGL) that we will use
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     {
 
         std::cout << SDL_GetError() << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Force GLEW to use experimental draw calls, but they are supported by the card
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     if(GLEW_OK != glewError)
     {
         std::cout << "GLEW Error: " << glewGetErrorString(glewError) << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //DO SOME OPENGL STUFF HERE
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
         char openGLCompilerError[1024];
         glGetShaderInfoLog(vertexShader, 1024, NULL, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
 
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
         char openGLCompilerError[1024];
         glGetShaderInfoLog(fragmentShader, 1024, NULL, openGLCompilerError);
         std::cout << openGLCompilerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
     //Now to use the shaders we just compiled, we need to create a shader program
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
         char openGLLinkerError[1024];
         glGetProgramInfoLog(shaderProgram, 1024, NULL, openGLLinkerError);
         std::cout << openGLLinkerError << '\n';
-        exit(-1);
+        assert(false);
     }
 
 
