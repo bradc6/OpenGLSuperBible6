@@ -134,6 +134,9 @@ int main(int argc, char* argv[])
     //*********************************
     //Simple Checkboard texture pattern
     //*********************************
+
+    std::string glDebugGroupName("Checkerboard Debug Group");
+    glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, glDebugGroupName.length(), glDebugGroupName.c_str());
     GLuint checkBoardTexture = glNULL;
     //Generate the texture name
     glGenTextures(1, &checkBoardTexture);
@@ -157,6 +160,10 @@ int main(int argc, char* argv[])
     glTextureParameteriEXT(checkBoardTexture, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTextureParameteriEXT(checkBoardTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+    glPopDebugGroup();
+
+    glDebugGroupName = "SDL Image";
+    glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, glDebugGroupName.length(), glDebugGroupName.c_str());
     //First we need to load a 2d texture into system
     //memory.
     SDL_Surface *sysMainTexture = nullptr;
@@ -217,6 +224,8 @@ int main(int argc, char* argv[])
 
     glTextureParameteriEXT(loadedImageTexture, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTextureParameteriEXT(loadedImageTexture, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glPopDebugGroup();
 
     //**********************************************
     //Create a vertex array and upload it to the GPU
