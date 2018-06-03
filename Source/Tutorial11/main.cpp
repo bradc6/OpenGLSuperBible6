@@ -284,14 +284,15 @@ int main(int argc, char* argv[])
         //Clear the depth buffer
         glClearBufferfv(GL_DEPTH, 0, &one);
 
-        GLfloat time = ((GLfloat)SDL_GetTicks() * 750) / (GLfloat)CLOCKS_PER_SEC;
+        const GLfloat milisecondsPerSecond = 1000;
+        GLfloat time = static_cast<GLfloat>(SDL_GetTicks()) / milisecondsPerSecond;
+
         GLfloat slowTime = time / 3.0f;
-        glm::mat4 modelViewMatrix = glm::translate(glm::vec3(0.0f, 0.0f, -4.0f)) *
-                                    glm::translate(glm::vec3(sinf(2.1f * slowTime) * 0.5f,
-                                                    cosf(1.7f * slowTime) * 0.5f,
-                                                    (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) *
-                                    glm::rotate(float(time * (M_PI/4)), glm::vec3(0.0f, 1.0f, 0.0f)) *   //45.0f(Degrees) -> (M_PI/4) (Radians)
-                                    glm::rotate(float(time * (M_PI/2.22)), glm::vec3(1.0f, 0.0f, 0.0f)); //81.0f(Degrees) ~->(M_PI/2.22) (Radians)
+        glm::mat4 modelViewMatrix(1);
+        modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0f, 0.0f, -4.0f)) *       //Puts the model in the center of the frustrum
+                          glm::translate(modelViewMatrix, glm::vec3(sinf(2.1f * slowTime) * 0.5f, cosf(1.7f * slowTime) * 0.5f, (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) * //Moves the cube up/down and back
+                          glm::rotate(modelViewMatrix, float(time * (M_PI / 4)), glm::vec3(0.0f, 1.0f, 0.0f)) *   //45.0f(Degrees) -> (M_PI/4) (Radians) Rotates the cube
+                          glm::rotate(modelViewMatrix, float(time * (M_PI / 2.22)), glm::vec3(1.0f, 0.0f, 0.0f)); //81.0f(Degrees) ~->(M_PI/2.22) (Radians); Rotates it on another axis
 
         glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
 

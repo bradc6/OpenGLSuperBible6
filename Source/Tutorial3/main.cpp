@@ -151,7 +151,8 @@ int main(int argc, char* argv[])
                 break;
             }
         }
-        GLfloat time = ((GLfloat)SDL_GetTicks() * 750) / (GLfloat)CLOCKS_PER_SEC;
+        const GLfloat milisecondsPerSecond = 1000;
+        GLfloat time = static_cast<GLfloat>(SDL_GetTicks()) / milisecondsPerSecond;
 
         const GLfloat background[] = {sinf(time), cosf(time), 0.0f, 1.0f};
         glClearBufferfv(GL_COLOR, 0, background);

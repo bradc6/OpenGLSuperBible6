@@ -2,7 +2,7 @@
 
 #pragma message ("This sample does not currently work, check out the SDL2_Image tutorial instead")
 
-int main()
+int main(int argc, char* argv[])
 {
     std::cout << "Sample code of uploading a 2D Texture from a KTX image\n";
     

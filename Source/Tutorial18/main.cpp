@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     }
 
     //With the context set we will setup a OpenGL debug context callback
-    glDebugMessageCallbackARB((GLDEBUGPROCARB)gl_debug_callback, NULL);
+    glDebugMessageCallbackARB(gl_debug_callback, nullptr);
 
     //DO SOME OPENGL STUFF HERE
 
@@ -287,10 +287,11 @@ int main(int argc, char* argv[])
           GLuint drawTextureOrder[] = { WALL_TEXTURE, FLOOR_TEXTURE, WALL_TEXTURE, CEILING_TEXTURE };
            for(unsigned int currentPlane = 0; currentPlane < 4; currentPlane++)
            {
-               glm::mat4 modelViewMatrix = glm::rotate(float((M_PI/2) * currentPlane), glm::vec3(0.0f, 0.0f, 1.0f)) *
-                                           glm::translate(glm::vec3(-0.5f, 0.0f, -10.0f)) *
-                                           glm::rotate(float((M_PI/2)), glm::vec3(0.0f, 1.0f, 0.0f)) *
-                                           glm::scale(glm::vec3(30.0f, 1.0f, 1.0f));
+               glm::mat4 modelViewMatrix(1);
+               modelViewMatrix =           glm::rotate(modelViewMatrix, float((M_PI/2) * currentPlane), glm::vec3(0.0f, 0.0f, 1.0f)) *
+                                           glm::translate(modelViewMatrix, glm::vec3(-0.5f, 0.0f, -10.0f)) *
+                                           glm::rotate(modelViewMatrix, float((M_PI/2)), glm::vec3(0.0f, 1.0f, 0.0f)) *
+                                           glm::scale(modelViewMatrix, glm::vec3(30.0f, 1.0f, 1.0f));
 
                //Update the modelViewMatrix
                glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));

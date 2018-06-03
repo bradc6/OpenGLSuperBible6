@@ -293,6 +293,12 @@ set(Tutorial20-Source
 set(Tutorial21-Source
         ${TUTORIAL21_DIR}/main.hpp
         ${TUTORIAL21_DIR}/main.cpp
+	${TUTORIAL21_DIR}/Shaders/Clear.glsl.vert
+	${TUTORIAL21_DIR}/Shaders/Clear.glsl.frag
+	${TUTORIAL21_DIR}/Shaders/Append.glsl.vert
+	${TUTORIAL21_DIR}/Shaders/Append.glsl.frag
+	${TUTORIAL21_DIR}/Shaders/Resolve.glsl.vert
+	${TUTORIAL21_DIR}/Shaders/Resolve.glsl.frag
         )
 
 set(Tutorial22-Source
@@ -425,7 +431,7 @@ add_executable(tutorial20 ${Tutorial20-Source})
 target_link_libraries(tutorial20 ${GraphicsSamplesLinkerFlags})
 
 add_executable(tutorial21 ${Tutorial21-Source})
-target_link_libraries(tutorial21 ${GraphicsSamplesLinkerFlags})
+target_link_libraries(tutorial21 ${GraphicsSamplesLinkerFlags} tinyobjloader)
 
 add_executable(tutorial22 ${Tutorial20-Source})
 target_link_libraries(tutorial22 ${GraphicsSamplesLinkerFlags})

@@ -1,5 +1,4 @@
-#ifndef TUTORIAL17_MAIN_Header
-#define TUTORIAL17_MAIN_Header
+#pragma once
 
 //GLEW must be included before GL.h (or SDL_opengl.h)
 #include <GL/glew.h>
@@ -76,7 +75,7 @@ std::string LoadFileToString(const std::string &filePath)
     }
     catch (...)
     {
-        throw "A filesystem error occured";
+        assert(!"A filesystem error occured");
     }
 
     return inputFileStringStream.str();
@@ -164,6 +163,45 @@ GLuint CompileGLShader(std::string shaderFilePath, GLint shaderType)
     return targetShader;
 }
 
+//!Creates a serperable shader program
+GLuint CreateShaderProgram(std::string shaderSourceFilePath, GLint shaderType)
+{
+    //Get a shader loaded->compiled
+    GLuint compiledShader = CompileGLShader(shaderSourceFilePath, shaderType);
+
+    //Create a program
+    GLuint shaderProgram = glCreateProgram();
+
+    //Set the program's attribute to be a seperated shader program
+    //(Otherwise linking will fail as the program shader pipeline is incomplete)
+    glProgramParameteri(shaderProgram, GL_PROGRAM_SEPARABLE, GL_TRUE);
+
+    //Attach out single shader to the program
+    glAttachShader(shaderProgram, compiledShader);
+
+    //Link the resulting program
+    glLinkProgram(shaderProgram);
+
+    //Ensure that the program linked successfully
+    GLint programLinkerStatus;
+    //Get the status of the shader program linker.
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programLinkerStatus);
+    if (programLinkerStatus != GL_TRUE)
+    {
+        std::cout << "Failed to link shader program\n";
+        char openGLLinkerError[1024];
+        glGetProgramInfoLog(shaderProgram, 1024, nullptr, openGLLinkerError);
+        std::cout << openGLLinkerError << '\n';
+        assert(false);
+    }
+
+    //Now that the shader program has been linked successfully we will delete our
+    //shader object.
+    glDeleteShader(compiledShader);
+
+    return shaderProgram;
+}
+
 //!Loads the image to system memory,
 /*!Loads a GLSL shader and compiles the shader
  * \pre The image filepath must be a valid filesystem path to a valid image
@@ -220,11 +258,56 @@ void LoadImage(const std::string &imageFilePath, SDL_Surface *&targetSurface, GL
 }
 
 //OpenGL failure call
-
-void GLAPIENTRY gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
-const GLchar *message, GLvoid *userParam)
+//Formatting code from https://blog.nobel-joergensen.com/2013/02/17/debugging-opengl-part-2-using-gldebugmessagecallback/
+void GLAPIENTRY gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam)
 {
-    std::cout << "GL Debug:" << message << '\n';
-}
+    std::cout << "---------------------opengl-callback-start------------\n";
+    std::cout << "message: " << message << '\n';
+    std::cout << "type: ";
+    switch (type) {
+    case GL_DEBUG_TYPE_ERROR:
+        std::cout << "ERROR";
+        break;
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+        std::cout << "DEPRECATED_BEHAVIOR";
+        break;
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+        std::cout << "UNDEFINED_BEHAVIOR";
+        break;
+    case GL_DEBUG_TYPE_PORTABILITY:
+        std::cout << "PORTABILITY";
+        break;
+    case GL_DEBUG_TYPE_PERFORMANCE:
+        std::cout << "PERFORMANCE";
+        break;
+    case GL_DEBUG_TYPE_OTHER:
+        std::cout << "OTHER";
+        break;
+    default:
+        assert(!"Unknown DEBUG Type!");
+        break;
+    }
+    std::cout << '\n';
 
-#endif
+    std::cout << "id: " << id << '\n';
+    std::cout << "severity: ";
+    switch (severity) {
+    case GL_DEBUG_SEVERITY_LOW:
+        std::cout << "LOW";
+        break;
+    case GL_DEBUG_SEVERITY_MEDIUM:
+        std::cout << "MEDIUM";
+        break;
+    case GL_DEBUG_SEVERITY_HIGH:
+        std::cout << "HIGH";
+        break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION:
+        std::cout << "NOTIFICATION";
+        break;
+    default:
+        assert(!"Unknown SEVERITY Type!");
+        break;
+    }
+    std::cout << '\n';
+    std::cout << "---------------------opengl-callback-end--------------" << '\n';
+}

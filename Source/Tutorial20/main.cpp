@@ -1,4 +1,12 @@
-//Load up a model and wrap textures around it.
+//Alien rain using texture arrays
+
+//****************************NOTICE*********************************
+//NOTE: I am going to start using ShaderProgram pipelines here on out
+//the old way of creating the shader programs and compiling each permutation
+//feels old and unnessesary because seperate_shader is even supported on
+//macOS. (Crazy right) It was also making a lot of extra code that is simply
+//not nessesary. (You should know how to create a shader program at this point.
+//*******************************************************************
 
 #include "main.hpp"
 #include <iostream>
@@ -42,13 +50,35 @@ int main(int argc, char* argv[])
         assert(false);
     }
 
+    //Your graphics card must support seperate shader objects and debug callback
+    assert(GLEW_ARB_separate_shader_objects);
+    assert(GLEW_ARB_debug_output);
+
     //With the context set we will setup a OpenGL debug context callback
-    glDebugMessageCallbackARB((GLDEBUGPROCARB)gl_debug_callback, NULL);
+    glDebugMessageCallbackARB(gl_debug_callback, nullptr);
 
     //DO SOME OPENGL STUFF HERE
 
+    //Create the shader pipeline that we will use to connect our shader objects to
+    GLuint mainShaderPipeline = glNULL;
+    glGenProgramPipelines(1, &mainShaderPipeline);
+    assert(mainShaderPipeline != glNULL);
+
+    //Compile and link our shader programs that we will attach to the pipeline
+    GLuint vertexShaderProgram = CreateShaderProgram(QUOTE(SOURCEDIR/Source/Tutorial20/Shaders/Main.glsl.vert), GL_VERTEX_SHADER);
+    GLuint fragmentShaderProgram = CreateShaderProgram(QUOTE(SOURCEDIR/Source/Tutorial20/Shaders/Main.glsl.frag), GL_FRAGMENT_SHADER);
+
+    //With the shader programs compiled and linked lets attach them to the pipeline
+    glUseProgramStages(mainShaderPipeline, GL_VERTEX_SHADER_BIT, vertexShaderProgram);
+    glUseProgramStages(mainShaderPipeline, GL_FRAGMENT_SHADER_BIT, fragmentShaderProgram);
+
+    //Use the pipeline
+    glBindProgramPipeline(mainShaderPipeline);
+
+    //Verify the pipeline is good to go
+    glValidateProgramPipeline(mainShaderPipeline);
+
     //Declare and create a vertex array object
-    //This will store the different attributes of the shaders and vertex
     GLuint savedVertexAttributes;
 
     //Generate the Vertex Array object  on the graphics card that we
@@ -59,87 +89,6 @@ int main(int argc, char* argv[])
     //Bind that newly created space in order to be used
     glBindVertexArray(savedVertexAttributes);
 
-    //Now lets build a vertex shader
-    std::cout << "Shader Dir: " << QUOTE(SOURCEDIR/Source/Tutorial20/Shaders/Main.glsl.vert) << '\n';
-    std::string vertexShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial20/Shaders/Main.glsl.vert));
-    //Make a pointer to make glShaderSource happy (I REALLY hate this part of the solution)
-    const char *sourceVertexShaderBegin = vertexShaderSource.c_str();
-    //Create a instance of a vertex shader (Create a shader)
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    //Load the shader source into our Vertex Shader instance.
-    glShaderSource(vertexShader, 1, (const GLchar **) &sourceVertexShaderBegin, nullptr);
-    //Clear the system memory copy of the Vertex Shader Source
-    vertexShaderSource.clear();
-    //Now to compile the Vertex Shader
-    glCompileShader(vertexShader);
-    //Lets make a GLint to ensure that the shader compilation was successful
-    GLint shaderCompilerStatus;
-    //Get the status of the shader compiler.
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &shaderCompilerStatus);
-    if(shaderCompilerStatus != GL_TRUE)
-    {
-        std::cout << "Failed to compile the vertex shader\n";
-        char openGLCompilerError[1024];
-        glGetShaderInfoLog(vertexShader, 1024, nullptr, openGLCompilerError);
-        std::cout << openGLCompilerError << '\n';
-        assert(false);
-    }
-
-    //Now lets build a fragment shader
-    std::string fragmentShaderSource = LoadFileToString(QUOTE(SOURCEDIR/Source/Tutorial20/Shaders/Main.glsl.frag));
-    const char *sourceFragmentShaderBegin = fragmentShaderSource.c_str();
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, (const GLchar **) &sourceFragmentShaderBegin, nullptr);
-    fragmentShaderSource.clear();
-    glCompileShader(fragmentShader);
-    //Get the status of the shader compiler.
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &shaderCompilerStatus);
-    if(shaderCompilerStatus != GL_TRUE)
-    {
-        std::cout << "Failed to compile the fragment shader\n";
-        char openGLCompilerError[1024];
-        glGetShaderInfoLog(fragmentShader, 1024, nullptr, openGLCompilerError);
-        std::cout << openGLCompilerError << '\n';
-        assert(false);
-    }
-
-    //Now to use the shaders we just compiled, we need to create a shader program
-    //(In a sense these are like different, pipelines that when linked can be switched out)
-    GLuint shaderProgram = glCreateProgram();
-
-    //Attach shaders to our newly created shader program
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-
-    //Link the Shader Program to create a executable shader pipeline
-    //for the graphics card t ouse.
-    glLinkProgram(shaderProgram);
-    //Ensure that the program linked successfully
-    GLint programLinkerStatus;
-    //Get the status of the shader program linker.
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programLinkerStatus);
-    if(programLinkerStatus != GL_TRUE)
-    {
-        std::cout << "Failed to link shader program\n";
-        char openGLLinkerError[1024];
-        glGetProgramInfoLog(shaderProgram, 1024, nullptr, openGLLinkerError);
-        std::cout << openGLLinkerError << '\n';
-        assert(false);
-    }
-
-    //Use the shader program that OpenGL compiled and linked.
-    glUseProgram(shaderProgram);
-
-    //Since we are not going to attach the shaders to any
-    //additional programs they are safe to be deleted.
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    //Generate a name for our Vertex Array object
-    //and bind it for use.
-    GLuint mainVertexArray;
-    glGenVertexArrays(1, &mainVertexArray);
-    glBindVertexArray(mainVertexArray);
 
 
     return 0;

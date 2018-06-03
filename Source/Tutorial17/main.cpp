@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     }
 
     //With the context set we will setup a OpenGL debug context callback
-    glDebugMessageCallbackARB((GLDEBUGPROCARB)gl_debug_callback, NULL);
+    //glDebugMessageCallbackARB(gl_debug_callback, nullptr);
 
     //DO SOME OPENGL STUFF HERE
 
@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
     //the object.
     if(shapes.size() < 1)
     {
-        throw "No shapes were found";
+        assert(!"No shapes were found");
     }
 
 
@@ -312,7 +312,7 @@ int main(int argc, char* argv[])
     modelPositionAttibuteLocation = glGetAttribLocation(shaderProgram, "position");
     if(GL_INVALID_OPERATION == modelPositionAttibuteLocation)
     {
-        throw "Failed to get Position attribute from the vertex shader";
+        assert(!"Failed to get Position attribute from the vertex shader");
     }
     glEnableVertexAttribArray(modelPositionAttibuteLocation);
 
@@ -359,7 +359,7 @@ int main(int argc, char* argv[])
     textureCoordinatesAttibuteLocation = glGetAttribLocation(shaderProgram, "textureCoordinate");
     if(GL_INVALID_OPERATION == textureCoordinatesAttibuteLocation)
     {
-        throw "Failed to get TextureCoordinate attribute from the vertex shader";
+        assert(!"Failed to get TextureCoordinate attribute from the vertex shader");
     }
 
     //Setup the texture coordinates buffer, here we tell OpenGL how
@@ -422,8 +422,7 @@ int main(int argc, char* argv[])
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 
-
-
+    size_t  indicesByteOffset = 0;
     while(true)
     {
         if(SDL_PollEvent(windowEvent))
@@ -463,18 +462,19 @@ int main(int argc, char* argv[])
         //Clear the depth buffer
         glClearBufferfv(GL_DEPTH, 0, &one);
 
-        GLfloat time = ((GLfloat)SDL_GetTicks() * 750) / (GLfloat)CLOCKS_PER_SEC;
+        const GLfloat milisecondsPerSecond = 1000;
+        GLfloat time = static_cast<GLfloat>(SDL_GetTicks()) / milisecondsPerSecond;
+
         GLfloat slowTime = time / 3.0f;
-        glm::mat4 modelViewMatrix = glm::translate(glm::vec3(0.0f, 0.0f, -4.0f)) *
-                                    glm::translate(glm::vec3(sinf(2.1f * slowTime) * 0.5f,
-                                                    cosf(1.7f * slowTime) * 0.5f,
-                                                (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) *
-                                    glm::rotate(float(time * (M_PI/4)), glm::vec3(0.0f, 1.0f, 0.0f)) *
-                                    glm::rotate(float(time * (M_PI/2.22)), glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::mat4 modelViewMatrix(1);
+        modelViewMatrix = glm::translate(modelViewMatrix, glm::vec3(0.0f, 0.0f, -4.0f)) * //Gets the cube inside the camera frustum
+                                    glm::translate(modelViewMatrix, glm::vec3(sinf(2.1f * slowTime) * 0.5f, cosf(1.7f * slowTime) * 0.5f, (sinf(1.3f * slowTime) * cosf(1.5f * slowTime) * 2.0f))) * //Moves the cube in a circular pattern
+                                    glm::rotate(modelViewMatrix, float(time * (M_PI/4)), glm::vec3(0.0f, 1.0f, 0.0f)) *
+                                    glm::rotate(modelViewMatrix, float(time * (M_PI/2.22)), glm::vec3(1.0f, 0.0f, 0.0f));
 
         glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
 
-        glDrawElements(GL_TRIANGLES, shapes[0].mesh.indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, shapes[0].mesh.indices.size(), GL_UNSIGNED_INT, reinterpret_cast<void*>(indicesByteOffset));
         SDL_GL_SwapWindow(mainWindow);
     }
 

@@ -6,7 +6,7 @@
 #define SAMPLE_TEXTURE_WIDTH 256
 #define SAMPLE_TEXTURE_HEIGHT 256
 
-int main()
+int main(int argc, char* argv[])
 {
     std::cout << "Sample code of uploading a 2D Texturer\n"
               << "Note: We are using a simple hard coded texture.\n";
@@ -161,4 +161,6 @@ int main()
         
         SDL_GL_SwapWindow(mainWindow);
     }
+
+    return 0;
 }

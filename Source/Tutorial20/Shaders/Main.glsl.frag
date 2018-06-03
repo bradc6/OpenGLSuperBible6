@@ -1,15 +1,17 @@
 #version 410 core
 
-layout(location = 0) out vec4 outputColor;
+layout(location = 0) out vec4 color;
 
-in VertexShaderOutput {
-    flat int picture;
-    vec2 textureCoordinate;
-} fragmentShaderInput;
+in VS_OUT 
+{
+  flat int alien;
+  vec2 tc;
+}
+fs_in;
 
-uniform sampler2DArray pictureTextures;
+uniform sampler2DArray tex_aliens;
 
 void main(void)
 {
-    outputColor = texture(pictureTextures, vec3(fragmentShaderInput.textureCoordinate, float(fragmentShaderInput.picture)));
+  color = texture(tex_aliens, vec3(fs_in.tc, float(fs_in.alien)));
 }

@@ -2,6 +2,8 @@
 
 layout(location = 0) in int pictureIndex;
 
+out gl_PerVertex { vec4 gl_Position; };
+
 out VertexShaderOutput
 {
     flat int picture;
