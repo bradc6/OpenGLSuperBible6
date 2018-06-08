@@ -7,3 +7,6 @@
 [submodule "Libraries/glslang"]
 	path = Libraries/glslang
 	url = https://github.com/bradc6/glslang.git
+[submodule "Libraries/KTX"]
+	path = Libraries/KTX
+	url = git@github.com:bradc6/KTX.git
