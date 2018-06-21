@@ -57,10 +57,11 @@ int main(int argc, char* argv[])
                 break;
             }
         }
-            const GLfloat milisecondsPerSecond = 1000;
-            GLfloat time = static_cast<GLfloat>(SDL_GetTicks()) / milisecondsPerSecond;
 
-            const GLfloat background[] = {sinf(time), cosf(time), 0.0f, 1.0f};
+        const GLfloat milisecondsPerSecond = 1000;
+        GLfloat time = static_cast<GLfloat>(SDL_GetTicks()) / milisecondsPerSecond;
+
+        const GLfloat background[] = {sinf(time), cosf(time), 0.0f, 1.0f};
         glClearBufferfv(GL_COLOR, 0, background);
         SDL_GL_SwapWindow(mainWindow);
     }

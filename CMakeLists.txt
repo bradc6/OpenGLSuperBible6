@@ -97,8 +97,7 @@ find_package(GLM REQUIRED)
 list(APPEND GraphicsSamplesIncludeDirectories ${GLM_INCLUDE_DIRS})
 
 #Add additional cmake subprojects to ours.
-add_subdirectory(${LIBRARIES_DIR}/KTX/build/cmake)
-include_directories(${LIBRARIES_DIR}/KTX/include)
+add_subdirectory(${LIBRARIES_DIR}/KTX/build/cmake/linux/Debug)
 #Add TinyObjLoader
 add_subdirectory(${LIBRARIES_DIR}/TinyObjLoader)
 include_directories(${LIBRARIES_DIR}/TinyObjLoader)
@@ -284,6 +283,8 @@ set(Tutorial19-Source
 	)
 
 set(Tutorial20-Source
+        ${TUTORIAL20_DIR}/sb6ktx.h
+        ${TUTORIAL20_DIR}/sb6ktx.cpp
 	${TUTORIAL20_DIR}/main.hpp
 	${TUTORIAL20_DIR}/main.cpp
         ${TUTORIAL20_DIR}/Shaders/Main.glsl.vert
@@ -410,7 +411,7 @@ add_executable(tutorial13 ${Tutorial13-Source})
 target_link_libraries(tutorial13 ${GraphicsSamplesLinkerFlags})
 
 add_executable(tutorial14 ${Tutorial14-Source})
-target_link_libraries(tutorial14 ${GraphicsSamplesLinkerFlags} ktx)
+target_link_libraries(tutorial14 ${GraphicsSamplesLinkerFlags} libktx_gl)
 
 add_executable(tutorial15 ${Tutorial15-Source})
 target_link_libraries(tutorial15 ${GraphicsSamplesLinkerFlags} tinyobjloader)

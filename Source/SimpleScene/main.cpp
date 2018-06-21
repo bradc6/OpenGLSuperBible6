@@ -1,5 +1,5 @@
 #include "main.hpp"
-int main()
+int main(int argc, char* argv[])
 {
     //The main rendering window that we will open to
     //view scenes in.

@@ -3,7 +3,7 @@
 #define WINDOW_RESOLUTION_WIDTH 800
 #define WINDOW_RESOLUTION_HEIGHT 600
 
-int main()
+int main(int argc, char* argv[])
 {
     std::cout << "Sample code of uploading a 2D Texturer\n"
               << "Note: We are using a simple hard coded texture.\n";

@@ -8,11 +8,13 @@
 
 #include <assert.h>
 #include <iostream>
+
 #include <string>
 #include <memory>
 
 
 #include "../Camera/Camera.hpp"
+#undef CreateWindow
 
 class Render
 {

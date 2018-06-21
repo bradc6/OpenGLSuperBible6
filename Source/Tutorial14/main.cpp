@@ -165,7 +165,6 @@ int main(int argc, char* argv[])
         assert(false);
     }
 
-    glEnable(ktxTexture);
     if(isTexturePreMipmapped)
     {
         //Enable bilinear mipmapping

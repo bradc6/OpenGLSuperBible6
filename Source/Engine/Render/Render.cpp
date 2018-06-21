@@ -1,4 +1,5 @@
 #include "Render.hpp"
+#undef CreateWindow
 
 Render::Render()
 {
@@ -39,7 +40,7 @@ void Render::CreateWindow(const std::string &windowTitle,
     renderWindow = SDL_CreateWindow(windowTitle.c_str(), //The title of the window
                                     100, 100, //Starting X/Y position of the newly created Window
                                     windowWidth, windowHeight, //The Width and Height of the window
-                                    SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE); //The window is resizeable,OpenGL and allow HIDPI
+                                    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE); //The window is resizeable,OpenGL and allow HIDPI
     //Fail if the program was unable to
     //be created
     assert(renderWindow);
