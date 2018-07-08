@@ -45,7 +45,6 @@ int main(int argc, char* argv[])
     glClearBufferfv(GL_COLOR, 0, redColor);
 
 
-    SDL_GL_SwapWindow(mainWindow);
     //Create a window event in order to know when the mainWindow "Close" is pressed
     SDL_Event *windowEvent = new SDL_Event;
 
@@ -58,6 +57,8 @@ int main(int argc, char* argv[])
                 break;
             }
         }
+
+        SDL_GL_SwapWindow(mainWindow);
     }
 
     //Clean up our data structures

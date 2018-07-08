@@ -315,6 +315,8 @@ set(Tutorial23-Source
 set(Tutorial24-Source
         ${TUTORIAL24_DIR}/main.hpp
         ${TUTORIAL24_DIR}/main.cpp
+        ${TUTORIAL24_DIR}/Shaders/Main.glsl.vert
+        ${TUTORIAL24_DIR}/Shaders/Main.glsl.frag
         )
 
 set(Tutorial25-Source
@@ -507,4 +509,4 @@ set(SimpleScene-Source
 )
 
 add_executable(SimpleScene ${SimpleScene-Source})
-target_link_libraries(SimpleScene ${GraphicsSamplesLinkerFlags} Engine tinyobjloader)
+target_link_libraries(SimpleScene ${GraphicsSamplesLinkerFlags} tinyobjloader)
