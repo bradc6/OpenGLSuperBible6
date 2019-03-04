@@ -500,12 +500,17 @@ set(Engine-Source
 )
 
 add_library(Engine ${Engine-Source})
+target_include_directories(Engine PUBLIC ${ENGINE_DIR})
 target_link_libraries(Engine ${GraphicsSamplesLinkerFlags} tinyobjloader)
 
 #Sample Projects using the render engine.
 set(SimpleScene-Source
     ${SIMPLESCENE_DIR}/main.hpp
     ${SIMPLESCENE_DIR}/main.cpp
+    ${SIMPLESCENE_DIR}/Camera.hpp
+    ${SIMPLESCENE_DIR}/Camera.cpp
+    ${SIMPLESCENE_DIR}/Shaders/Main.glsl.frag
+    ${SIMPLESCENE_DIR}/Shaders/Main.glsl.vert
 )
 
 add_executable(SimpleScene ${SimpleScene-Source})

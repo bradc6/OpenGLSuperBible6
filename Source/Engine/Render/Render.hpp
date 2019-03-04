@@ -30,9 +30,7 @@ class Render
                           unsigned int windowWidth = 800,
                           unsigned int windowHeight = 600);
         void DestroyWindow();
-    protected:
 
-    private:
         SDL_Window *renderWindow;
         SDL_GLContext renderContext;
         Camera defaultCamera;

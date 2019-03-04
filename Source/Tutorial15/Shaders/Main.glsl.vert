@@ -10,6 +10,7 @@ out VertexShaderOuput
         vec4 vertexColor;
 } vertexShaderOut;
 
+
 //The Model View Matrix to convert vertice points
 //from the localized model points to the Viewer space
 //(Positions relative to the viewer (ie Camera View))
